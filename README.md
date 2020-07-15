@@ -10,7 +10,7 @@
 
 ...
 
-## spring boot stater依赖
+## spring boot starter依赖
 
 - 方便在 web 环境下使用 `oss` ，已上传至 maven 仓库
 ```xml
