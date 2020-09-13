@@ -5,12 +5,12 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.3.1.RELEASE</version>
+		<version>2.3.3.RELEASE</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.pig4cloud.plugin</groupId>
 	<artifactId>oss-spring-boot-starter</artifactId>
-	<version>0.0.2</version>
+	<version>0.0.3</version>
 	<name>oss-spring-boot-starter</name>
 	<description>兼容S3 协议的通用文件存储工具类</description>
 
@@ -18,7 +18,7 @@
 		<java.version>1.8</java.version>
 		<aws.version>1.11.820</aws.version>
 		<mica.auto.version>1.2.3</mica.auto.version>
-		<spring.checkstyle.plugin>0.0.22</spring.checkstyle.plugin>
+		<spring.checkstyle.plugin>0.0.23</spring.checkstyle.plugin>
 	</properties>
 
 	<dependencies>
