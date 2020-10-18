@@ -17,7 +17,7 @@
 <dependency>
     <groupId>com.pig4cloud.plugin</groupId>
     <artifactId>oss-spring-boot-starter</artifactId>
-    <version>0.0.2</version>
+    <version>0.0.3</version>
 </dependency>
 ```
 
@@ -42,8 +42,8 @@ oss:
 ### 代码使用
 
 ```java
-@Autowire
-private MinioTemplate minioTemplate;
+@Autowired
+private OssTemplate template;
 /**
  * 上传文件
  * 文件名采用uuid,避免原始文件名中带"-"符号导致下载的时候解析出现异常
@@ -53,7 +53,7 @@ private MinioTemplate minioTemplate;
  */
 @PostMapping("/upload")
 public R upload(@RequestParam("file") MultipartFile file, HttpServletRequest request) {
-	minioTemplate.putObject(CommonConstants.BUCKET_NAME, fileName, file.getInputStream());
+	template.putObject(CommonConstants.BUCKET_NAME, fileName, file.getInputStream());
 	return R.ok(resultMap);
 }
 ```
