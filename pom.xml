@@ -5,12 +5,12 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.3.3.RELEASE</version>
+		<version>2.3.4.RELEASE</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.pig4cloud.plugin</groupId>
 	<artifactId>oss-spring-boot-starter</artifactId>
-	<version>0.0.3</version>
+	<version>0.0.4</version>
 	<name>oss-spring-boot-starter</name>
 	<description>兼容S3 协议的通用文件存储工具类</description>
 
