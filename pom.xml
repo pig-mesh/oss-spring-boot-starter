@@ -16,7 +16,7 @@
 
 	<properties>
 		<java.version>1.8</java.version>
-		<aws.version>1.11.820</aws.version>
+		<aws.version>1.11.924</aws.version>
 		<mica.auto.version>1.2.3</mica.auto.version>
 		<spring.checkstyle.plugin>0.0.23</spring.checkstyle.plugin>
 	</properties>
