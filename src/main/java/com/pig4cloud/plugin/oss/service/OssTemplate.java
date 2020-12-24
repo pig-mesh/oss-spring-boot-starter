@@ -133,7 +133,7 @@ public class OssTemplate implements InitializingBean, DisposableBean {
 	 * "https://docs.aws.amazon.com/zh_cn/AmazonS3/latest/API/API_DeleteBucket.html">删除存储桶</a>
 	 */
 	public DeleteBucketResponse removeBucket(String bucket)
-		throws AwsServiceException, SdkClientException, S3Exception {
+			throws AwsServiceException, SdkClientException, S3Exception {
 		return s3Client.deleteBucket(DeleteBucketRequest.builder().bucket(bucket).build());
 	}
 
@@ -152,10 +152,9 @@ public class OssTemplate implements InitializingBean, DisposableBean {
 
 	/**
 	 * 获取文件外链
-	 *
 	 * @param bucketName bucket名称
-	 * @param keyName    文件名称
-	 * @param duration   过期时间
+	 * @param keyName 文件名称
+	 * @param duration 过期时间
 	 * @return url的文本表示
 	 * @see <a href=
 	 * "https://github.com/awsdocs/aws-doc-sdk-examples/blob/master/javav2/example_code/s3/src/main/java/com/example/s3/GetObjectPresignedUrl.java">获取文件外链</a>
@@ -165,7 +164,7 @@ public class OssTemplate implements InitializingBean, DisposableBean {
 		GetObjectRequest getObjectRequest = GetObjectRequest.builder().bucket(bucketName).key(keyName).build();
 
 		GetObjectPresignRequest getObjectPresignRequest = GetObjectPresignRequest.builder().signatureDuration(duration)
-			.getObjectRequest(getObjectRequest).build();
+				.getObjectRequest(getObjectRequest).build();
 
 		PresignedGetObjectRequest presignedGetObjectRequest = s3Presigner.presignGetObject(getObjectPresignRequest);
 		URL url = presignedGetObjectRequest.url();
@@ -174,9 +173,8 @@ public class OssTemplate implements InitializingBean, DisposableBean {
 
 	/**
 	 * 获取文件外链,10分钟后过期
-	 *
 	 * @param bucketName bucket名称
-	 * @param keyName    文件名称
+	 * @param keyName 文件名称
 	 * @return url的文本表示
 	 * @see <a href=
 	 * "https://github.com/awsdocs/aws-doc-sdk-examples/blob/master/javav2/example_code/s3/src/main/java/com/example/s3/GetObjectPresignedUrl.java">获取文件外链</a>
@@ -201,14 +199,15 @@ public class OssTemplate implements InitializingBean, DisposableBean {
 
 	/**
 	 * 上传文件
+	 *
 	 * @param bucketName bucket名称
 	 * @param objectName 文件名称
-	 * @param stream 文件流
+	 * @param stream     文件流
 	 * @return 文件服务器针对上传对象操作的返回结果
 	 * @throws AwsServiceException SDK可能引发的所有异常的基类（不论是服务端异常还是客户端异常）。可用于所有场景下的异常捕获。
-	 * @throws SdkClientException 如果发生任何客户端错误，例如与IO相关的异常，无法获取凭据等,会抛出此异常
-	 * @throws S3Exception 所有服务端异常的基类。未知异常将作为此类型的实例抛出
-	 * @throws IOException IO异常
+	 * @throws SdkClientException  如果发生任何客户端错误，例如与IO相关的异常，无法获取凭据等,会抛出此异常
+	 * @throws S3Exception         所有服务端异常的基类。未知异常将作为此类型的实例抛出
+	 * @throws IOException         IO异常
 	 * @see <a href=
 	 * "https://docs.aws.amazon.com/zh_cn/AmazonS3/latest/API/API_PutObject.html">往存储桶中添加对象</a>
 	 */
@@ -263,13 +262,12 @@ public class OssTemplate implements InitializingBean, DisposableBean {
 
 	/**
 	 * 删除对象
-	 *
 	 * @param bucket 存储桶名称
-	 * @param key    文件名称
+	 * @param key 文件名称
 	 * @return 文件服务器返回的删除对象的响应结果
 	 * @throws AwsServiceException SDK可能引发的所有异常的基类（不论是服务端异常还是客户端异常）。可用于所有场景下的异常捕获。
-	 * @throws SdkClientException  如果发生任何客户端错误，例如与IO相关的异常，无法获取凭据等,会抛出此异常
-	 * @throws S3Exception         所有服务端异常的基类。未知异常将作为此类型的实例抛出
+	 * @throws SdkClientException 如果发生任何客户端错误，例如与IO相关的异常，无法获取凭据等,会抛出此异常
+	 * @throws S3Exception 所有服务端异常的基类。未知异常将作为此类型的实例抛出
 	 * @see <a href=
 	 * "https://docs.aws.amazon.com/zh_cn/AmazonS3/latest/API/API_DeleteObject.html">删除对象</a>
 	 */
@@ -282,11 +280,11 @@ public class OssTemplate implements InitializingBean, DisposableBean {
 	public void afterPropertiesSet() throws Exception {
 		// 构造S3客户端
 		AwsCredentials awsCredentials = AwsBasicCredentials.create(ossProperties.getAccessKey(),
-			ossProperties.getSecretKey());
+				ossProperties.getSecretKey());
 		AwsCredentialsProvider awsCredentialsProvider = StaticCredentialsProvider.create(awsCredentials);
 		this.s3Client = S3Client.builder().credentialsProvider(awsCredentialsProvider)
-			.region(Region.of(ossProperties.getRegion())).endpointOverride(URI.create(ossProperties.getEndpoint()))
-			.build();
+				.region(Region.of(ossProperties.getRegion())).endpointOverride(URI.create(ossProperties.getEndpoint()))
+				.build();
 		// 构造S3工具类
 		this.s3Utilities = S3Utilities.builder().region(Region.of(ossProperties.getRegion()))
 				.s3Configuration(
