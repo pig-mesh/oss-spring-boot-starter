@@ -19,6 +19,7 @@ package com.pig4cloud.plugin.oss;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import software.amazon.awssdk.regions.Region;
 
 /**
  * aws 配置信息
@@ -60,7 +61,7 @@ public class OssProperties {
 	/**
 	 * 区域
 	 */
-	private String region;
+	private String region = Region.AWS_CN_GLOBAL.id();
 
 	/**
 	 * Access key就像用户ID，可以唯一标识你的账户
@@ -75,6 +76,6 @@ public class OssProperties {
 	/**
 	 * 默认的存储桶名称
 	 */
-	private String bucketName = "payerp";
+	private String bucketName;
 
 }

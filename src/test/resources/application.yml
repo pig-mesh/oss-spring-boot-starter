@@ -1,0 +1,12 @@
+oss:
+  #使用云OSS  需要关闭
+  path-style-access: false
+  #对应上图 ③ 处配置
+  endpoint: https://minio.pig4cloud.com
+  # 上文创建的AK, 一定注意复制完整不要有空格
+  access-key: lengleng
+  # 上文创建的SK, 一定注意复制完整不要有空格
+  secret-key: lengleng
+  # 上文创建的桶名称
+  bucket-name: pig4cloud
+  region: Hangzhou

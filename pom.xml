@@ -3,40 +3,56 @@
 		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>org.springframework.boot</groupId>
-		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.3.4.RELEASE</version>
-		<relativePath/> <!-- lookup parent from repository -->
-	</parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.3.7.RELEASE</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
 	<groupId>com.pig4cloud.plugin</groupId>
 	<artifactId>oss-spring-boot-starter</artifactId>
 	<version>0.0.4</version>
 	<name>oss-spring-boot-starter</name>
 	<description>兼容S3 协议的通用文件存储工具类</description>
 
-	<properties>
-		<java.version>1.8</java.version>
-		<aws.version>1.11.924</aws.version>
-		<mica.auto.version>1.2.3</mica.auto.version>
-		<spring.checkstyle.plugin>0.0.23</spring.checkstyle.plugin>
-	</properties>
+    <properties>
+        <java.version>1.8</java.version>
+        <aws.version>2.15.51</aws.version>
+        <mica.auto.version>1.2.3</mica.auto.version>
+        <spring.checkstyle.plugin>0.0.23</spring.checkstyle.plugin>
+        <test.ng.version>7.3.0</test.ng.version>
+    </properties>
 
-	<dependencies>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-web</artifactId>
-			<scope>provided</scope>
-		</dependency>
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+            <scope>provided</scope>
+        </dependency>
 
-		<!--S3 SDK-->
-		<dependency>
-			<groupId>com.amazonaws</groupId>
-			<artifactId>aws-java-sdk-s3</artifactId>
-			<version>${aws.version}</version>
-		</dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+            <optional>true</optional>
+        </dependency>
 
-		<!--lombok 插件-->
-		<dependency>
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <scope>test</scope>
+            <version>${test.ng.version}</version>
+            <optional>true</optional>
+        </dependency>
+
+        <!--S3 SDK-->
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>s3</artifactId>
+            <version>${aws.version}</version>
+        </dependency>
+
+        <!--lombok 插件-->
+        <dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 			<optional>true</optional>

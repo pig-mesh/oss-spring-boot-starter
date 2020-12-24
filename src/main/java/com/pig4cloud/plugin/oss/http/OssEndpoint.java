@@ -17,9 +17,6 @@
 
 package com.pig4cloud.plugin.oss.http;
 
-import com.amazonaws.services.s3.model.Bucket;
-import com.amazonaws.services.s3.model.S3Object;
-import com.amazonaws.services.s3.model.S3ObjectSummary;
 import com.pig4cloud.plugin.oss.service.OssTemplate;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
@@ -27,7 +24,10 @@ import net.dreamlu.mica.auto.annotation.AutoIgnore;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import software.amazon.awssdk.services.s3.model.Bucket;
+import software.amazon.awssdk.services.s3.model.S3Object;
 
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -53,7 +53,7 @@ public class OssEndpoint {
 	 */
 	@SneakyThrows
 	@PostMapping("/bucket/{bucketName}")
-	public Bucket createBucker(@PathVariable String bucketName) {
+	public Bucket createBucket(@PathVariable String bucketName) {
 
 		template.createBucket(bucketName);
 		return template.getBucket(bucketName).get();
@@ -87,7 +87,7 @@ public class OssEndpoint {
 	public S3Object createObject(@RequestBody MultipartFile object, @PathVariable String bucketName) {
 		String name = object.getOriginalFilename();
 		template.putObject(bucketName, name, object.getInputStream(), object.getSize(), object.getContentType());
-		return template.getObjectInfo(bucketName, name);
+		return template.getObject(bucketName, name);
 
 	}
 
@@ -96,13 +96,13 @@ public class OssEndpoint {
 	public S3Object createObject(@RequestBody MultipartFile object, @PathVariable String bucketName,
 			@PathVariable String objectName) {
 		template.putObject(bucketName, objectName, object.getInputStream(), object.getSize(), object.getContentType());
-		return template.getObjectInfo(bucketName, objectName);
+		return template.getObject(bucketName, objectName);
 
 	}
 
 	@SneakyThrows
 	@GetMapping("/object/{bucketName}/{objectName}")
-	public List<S3ObjectSummary> filterObject(@PathVariable String bucketName, @PathVariable String objectName) {
+	public List<S3Object> filterObject(@PathVariable String bucketName, @PathVariable String objectName) {
 
 		return template.getAllObjectsByPrefix(bucketName, objectName);
 
@@ -116,7 +116,7 @@ public class OssEndpoint {
 		// Put Object info
 		responseBody.put("bucket", bucketName);
 		responseBody.put("object", objectName);
-		responseBody.put("url", template.getObjectURL(bucketName, objectName, expires));
+		responseBody.put("url", template.getObjectURL(bucketName, objectName, Duration.ofMinutes(expires)));
 		responseBody.put("expires", expires);
 		return responseBody;
 	}
