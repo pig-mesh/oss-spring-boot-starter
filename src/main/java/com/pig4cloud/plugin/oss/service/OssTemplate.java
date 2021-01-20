@@ -17,17 +17,6 @@
 
 package com.pig4cloud.plugin.oss.service;
 
-import java.io.InputStream;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.List;
-import java.util.Optional;
-
-import org.springframework.beans.factory.InitializingBean;
-
 import com.amazonaws.ClientConfiguration;
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSCredentialsProvider;
@@ -36,17 +25,15 @@ import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
-import com.amazonaws.services.s3.model.Bucket;
-import com.amazonaws.services.s3.model.CannedAccessControlList;
-import com.amazonaws.services.s3.model.ObjectListing;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.PutObjectResult;
-import com.amazonaws.services.s3.model.S3Object;
-import com.amazonaws.services.s3.model.S3ObjectSummary;
+import com.amazonaws.services.s3.model.*;
 import com.pig4cloud.plugin.oss.OssProperties;
-
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import org.springframework.beans.factory.InitializingBean;
+
+import java.io.InputStream;
+import java.net.URL;
+import java.util.*;
 
 /**
  * aws-s3 通用存储操作 支持所有兼容s3协议的云存储: {阿里云OSS，腾讯云COS，七牛云，京东云，minio 等}
@@ -65,7 +52,6 @@ public class OssTemplate implements InitializingBean {
 
 	/**
 	 * 创建bucket
-	 * 
 	 * @param bucketName bucket名称
 	 */
 	@SneakyThrows
@@ -80,8 +66,8 @@ public class OssTemplate implements InitializingBean {
 	 * <p>
 	 *
 	 * @see <a href=
-	 *      "http://docs.aws.amazon.com/goto/WebAPI/s3-2006-03-01/ListBuckets">AWS
-	 *      API Documentation</a>
+	 * "http://docs.aws.amazon.com/goto/WebAPI/s3-2006-03-01/ListBuckets">AWS API
+	 * Documentation</a>
 	 */
 	@SneakyThrows
 	public List<Bucket> getAllBuckets() {
@@ -91,8 +77,8 @@ public class OssTemplate implements InitializingBean {
 	/**
 	 * @param bucketName bucket名称
 	 * @see <a href=
-	 *      "http://docs.aws.amazon.com/goto/WebAPI/s3-2006-03-01/ListBuckets">AWS
-	 *      API Documentation</a>
+	 * "http://docs.aws.amazon.com/goto/WebAPI/s3-2006-03-01/ListBuckets">AWS API
+	 * Documentation</a>
 	 */
 	@SneakyThrows
 	public Optional<Bucket> getBucket(String bucketName) {
@@ -102,8 +88,8 @@ public class OssTemplate implements InitializingBean {
 	/**
 	 * @param bucketName bucket名称
 	 * @see <a href=
-	 *      "http://docs.aws.amazon.com/goto/WebAPI/s3-2006-03-01/DeleteBucket">AWS
-	 *      API Documentation</a>
+	 * "http://docs.aws.amazon.com/goto/WebAPI/s3-2006-03-01/DeleteBucket">AWS API
+	 * Documentation</a>
 	 */
 	@SneakyThrows
 	public void removeBucket(String bucketName) {
@@ -112,37 +98,35 @@ public class OssTemplate implements InitializingBean {
 
 	/**
 	 * 根据文件前置查询文件
-	 * 
+	 *
 	 * @param bucketName bucket名称
 	 * @param prefix     前缀
 	 * @param recursive  是否递归查询
 	 * @return S3ObjectSummary 列表
 	 * @see <a href=
-	 *      "http://docs.aws.amazon.com/goto/WebAPI/s3-2006-03-01/ListObjects">AWS
-	 *      API Documentation</a>
+	 * "http://docs.aws.amazon.com/goto/WebAPI/s3-2006-03-01/ListObjects">AWS API
+	 * Documentation</a>
 	 */
 	@SneakyThrows
-	public List<S3ObjectSummary> getAllObjectsByPrefix(String bucketName, String prefix, boolean recursive) {
+	public List<S3ObjectSummary> getAllObjectsByPrefix(String bucketName, String prefix) {
 		ObjectListing objectListing = amazonS3.listObjects(bucketName, prefix);
 		return new ArrayList<>(objectListing.getObjectSummaries());
 	}
 
 	/**
 	 * 获取文件外链
-	 * 
 	 * @param bucketName bucket名称
 	 * @param objectName 文件名称
-	 * @param expires    过期时间 <=7
+	 * @param expires 过期时间，单位分钟,请注意该值必须小于7天
 	 * @return url
-	 * @see AmazonS3#generatePresignedUrl(String bucketName, String key, Date
-	 *      expiration)
+	 * @see AmazonS3#generatePresignedUrl(String bucketName, String key, Date expiration)
 	 */
 	@SneakyThrows
 	public String getObjectURL(String bucketName, String objectName, Integer expires) {
 		Date date = new Date();
 		Calendar calendar = new GregorianCalendar();
 		calendar.setTime(date);
-		calendar.add(Calendar.DAY_OF_MONTH, expires);
+		calendar.add(Calendar.MINUTE, expires);
 		URL url = amazonS3.generatePresignedUrl(bucketName, objectName, calendar.getTime());
 		return url.toString();
 	}
@@ -150,14 +134,13 @@ public class OssTemplate implements InitializingBean {
 	/**
 	 * 获取文件URL
 	 * <p>
-	 * If the object identified by the given bucket and key has public read
-	 * permissions (ex: {@link CannedAccessControlList#PublicRead}), then this URL
-	 * can be directly accessed to retrieve the object's data.
-	 * 
+	 * If the object identified by the given bucket and key has public read permissions
+	 * (ex: {@link CannedAccessControlList#PublicRead}), then this URL can be directly
+	 * accessed to retrieve the object's data.
 	 * @param bucketName bucket名称
 	 * @param objectName 文件名称
 	 * @return url
-	 * 
+	 *
 	 */
 	@SneakyThrows
 	public String getObjectURL(String bucketName, String objectName) {
@@ -167,13 +150,11 @@ public class OssTemplate implements InitializingBean {
 
 	/**
 	 * 获取文件
-	 * 
 	 * @param bucketName bucket名称
 	 * @param objectName 文件名称
 	 * @return 二进制流
-	 * @see <a href=
-	 *      "http://docs.aws.amazon.com/goto/WebAPI/s3-2006-03-01/GetObject">AWS API
-	 *      Documentation</a>
+	 * @see <a href= "http://docs.aws.amazon.com/goto/WebAPI/s3-2006-03-01/GetObject">AWS
+	 * API Documentation</a>
 	 */
 	@SneakyThrows
 	public S3Object getObject(String bucketName, String objectName) {
@@ -182,48 +163,46 @@ public class OssTemplate implements InitializingBean {
 
 	/**
 	 * 上传文件
-	 * 
 	 * @param bucketName bucket名称
 	 * @param objectName 文件名称
-	 * @param stream     文件流
+	 * @param stream 文件流
 	 * @throws Exception
 	 */
 	public void putObject(String bucketName, String objectName, InputStream stream) throws Exception {
-		putObject(bucketName, objectName, stream, (long) stream.available(), "application/octet-stream");
+		putObject(bucketName, objectName, stream, stream.available(), "application/octet-stream");
 	}
 
 	/**
 	 * 上传文件
-	 * 
-	 * @param bucketName  bucket名称
-	 * @param objectName  文件名称
-	 * @param stream      文件流
-	 * @param size        大小
+	 * @param bucketName bucket名称
+	 * @param objectName 文件名称
+	 * @param stream 文件流
+	 * @param size 大小
 	 * @param contextType 类型
 	 * @throws Exception
-	 * @see <a href=
-	 *      "http://docs.aws.amazon.com/goto/WebAPI/s3-2006-03-01/PutObject">AWS API
-	 *      Documentation</a>
+	 * @see <a href= "http://docs.aws.amazon.com/goto/WebAPI/s3-2006-03-01/PutObject">AWS
+	 * API Documentation</a>
 	 */
 	public PutObjectResult putObject(String bucketName, String objectName, InputStream stream, long size,
-			String contextType) throws Exception {
+									 String contextType) throws Exception {
 		ObjectMetadata objectMetadata = new ObjectMetadata();
 		objectMetadata.setContentLength(size);
 		objectMetadata.setContentType(contextType);
-		// 上传
-		return amazonS3.putObject(bucketName, objectName, stream, objectMetadata);
+		PutObjectRequest putObjectRequest = new PutObjectRequest(bucketName, objectName, stream, objectMetadata);
+		// Setting the read limit value to one byte greater than the size of stream will
+		// reliably avoid a ResetException
+		putObjectRequest.getRequestClientOptions().setReadLimit(Long.valueOf(size).intValue() + 1);
+		return amazonS3.putObject(putObjectRequest);
 
 	}
 
 	/**
 	 * 获取文件信息
-	 * 
 	 * @param bucketName bucket名称
 	 * @param objectName 文件名称
 	 * @throws Exception
-	 * @see <a href=
-	 *      "http://docs.aws.amazon.com/goto/WebAPI/s3-2006-03-01/GetObject">AWS API
-	 *      Documentation</a>
+	 * @see <a href= "http://docs.aws.amazon.com/goto/WebAPI/s3-2006-03-01/GetObject">AWS
+	 * API Documentation</a>
 	 */
 	public S3Object getObjectInfo(String bucketName, String objectName) throws Exception {
 		return amazonS3.getObject(bucketName, objectName);
@@ -231,13 +210,12 @@ public class OssTemplate implements InitializingBean {
 
 	/**
 	 * 删除文件
-	 * 
 	 * @param bucketName bucket名称
 	 * @param objectName 文件名称
 	 * @throws Exception
 	 * @see <a href=
-	 *      "http://docs.aws.amazon.com/goto/WebAPI/s3-2006-03-01/DeleteObject">AWS
-	 *      API Documentation</a>
+	 * "http://docs.aws.amazon.com/goto/WebAPI/s3-2006-03-01/DeleteObject">AWS API
+	 * Documentation</a>
 	 */
 	public void removeObject(String bucketName, String objectName) throws Exception {
 		amazonS3.deleteObject(bucketName, objectName);
