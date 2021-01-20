@@ -104,7 +104,7 @@ public class OssEndpoint {
 	@GetMapping("/object/{bucketName}/{objectName}")
 	public List<S3ObjectSummary> filterObject(@PathVariable String bucketName, @PathVariable String objectName) {
 
-		return template.getAllObjectsByPrefix(bucketName, objectName, true);
+		return template.getAllObjectsByPrefix(bucketName, objectName);
 
 	}
 
