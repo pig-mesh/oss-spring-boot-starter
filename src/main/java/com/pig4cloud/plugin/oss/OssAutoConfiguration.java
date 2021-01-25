@@ -28,7 +28,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * aws 自动配置类
+ * oss 自动配置类
  *
  * @author lengleng
  * @author 858695266
@@ -42,14 +42,14 @@ public class OssAutoConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean(OssTemplate.class)
-	@ConditionalOnProperty(name = "oss.enable", havingValue = "true", matchIfMissing = true)
+	@ConditionalOnProperty(prefix = OssProperties.PREFIX, name = "enable", havingValue = "true", matchIfMissing = true)
 	public OssTemplate ossTemplate() {
 		return new OssTemplate(properties);
 	}
 
 	@Bean
 	@ConditionalOnWebApplication
-	@ConditionalOnProperty(name = "oss.info", havingValue = "true")
+	@ConditionalOnProperty(prefix = OssProperties.PREFIX, name = "info", havingValue = "true")
 	public OssEndpoint ossEndpoint(OssTemplate template) {
 		return new OssEndpoint(template);
 	}

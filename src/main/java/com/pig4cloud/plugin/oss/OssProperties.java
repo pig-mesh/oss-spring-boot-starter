@@ -21,7 +21,7 @@ import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
- * aws 配置信息
+ * oss 配置信息
  *
  * @author lengleng
  * @author 858695266 配置文件添加： oss: enable: true endpoint: http://127.0.0.1:9000 #
@@ -32,8 +32,13 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * bucket 设置公共读权限
  */
 @Data
-@ConfigurationProperties(prefix = "oss")
+@ConfigurationProperties(prefix = OssProperties.PREFIX)
 public class OssProperties {
+
+	/**
+	 * 配置前缀
+	 */
+	public static final String PREFIX = "oss";
 
 	/**
 	 * 对象存储服务的URL
@@ -75,6 +80,6 @@ public class OssProperties {
 	/**
 	 * 默认的存储桶名称
 	 */
-	private String bucketName = "payerp";
+	private String bucketName;
 
 }
