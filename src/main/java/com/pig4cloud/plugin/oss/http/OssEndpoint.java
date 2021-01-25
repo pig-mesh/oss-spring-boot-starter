@@ -33,7 +33,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * aws 对外提供服务端点
+ * oss 对外提供服务端点
  *
  * @author lengleng
  * @author 858695266
