@@ -46,37 +46,41 @@ import java.util.Map;
 @RequestMapping("/oss")
 public class OssEndpoint {
 
-	private final OssTemplate template;
+	/**
+	 * OSS操作模板
+	 */
+	private final OssTemplate ossTemplate;
 
 	/**
 	 * Bucket Endpoints
 	 */
 	@SneakyThrows
 	@PostMapping("/bucket/{bucketName}")
-	public Bucket createBucker(@PathVariable String bucketName) {
+	public Bucket createBucket(@PathVariable String bucketName) {
 
-		template.createBucket(bucketName);
-		return template.getBucket(bucketName).get();
+		ossTemplate.createBucket(bucketName);
+		return ossTemplate.getBucket(bucketName).get();
 
 	}
 
 	@SneakyThrows
 	@GetMapping("/bucket")
 	public List<Bucket> getBuckets() {
-		return template.getAllBuckets();
+		return ossTemplate.getAllBuckets();
 	}
 
 	@SneakyThrows
 	@GetMapping("/bucket/{bucketName}")
 	public Bucket getBucket(@PathVariable String bucketName) {
-		return template.getBucket(bucketName).orElseThrow(() -> new IllegalArgumentException("Bucket Name not found!"));
+		return ossTemplate.getBucket(bucketName)
+			.orElseThrow(() -> new IllegalArgumentException("Bucket Name not found!"));
 	}
 
 	@SneakyThrows
 	@DeleteMapping("/bucket/{bucketName}")
 	@ResponseStatus(HttpStatus.ACCEPTED)
 	public void deleteBucket(@PathVariable String bucketName) {
-		template.removeBucket(bucketName);
+		ossTemplate.removeBucket(bucketName);
 	}
 
 	/**
@@ -86,8 +90,8 @@ public class OssEndpoint {
 	@PostMapping("/object/{bucketName}")
 	public S3Object createObject(@RequestBody MultipartFile object, @PathVariable String bucketName) {
 		String name = object.getOriginalFilename();
-		template.putObject(bucketName, name, object.getInputStream(), object.getSize(), object.getContentType());
-		return template.getObjectInfo(bucketName, name);
+		ossTemplate.putObject(bucketName, name, object.getInputStream(), object.getSize(), object.getContentType());
+		return ossTemplate.getObjectInfo(bucketName, name);
 
 	}
 
@@ -95,8 +99,9 @@ public class OssEndpoint {
 	@PostMapping("/object/{bucketName}/{objectName}")
 	public S3Object createObject(@RequestBody MultipartFile object, @PathVariable String bucketName,
 			@PathVariable String objectName) {
-		template.putObject(bucketName, objectName, object.getInputStream(), object.getSize(), object.getContentType());
-		return template.getObjectInfo(bucketName, objectName);
+		ossTemplate.putObject(bucketName, objectName, object.getInputStream(), object.getSize(),
+			object.getContentType());
+		return ossTemplate.getObjectInfo(bucketName, objectName);
 
 	}
 
@@ -104,7 +109,7 @@ public class OssEndpoint {
 	@GetMapping("/object/{bucketName}/{objectName}")
 	public List<S3ObjectSummary> filterObject(@PathVariable String bucketName, @PathVariable String objectName) {
 
-		return template.getAllObjectsByPrefix(bucketName, objectName);
+		return ossTemplate.getAllObjectsByPrefix(bucketName, objectName);
 
 	}
 
@@ -116,7 +121,7 @@ public class OssEndpoint {
 		// Put Object info
 		responseBody.put("bucket", bucketName);
 		responseBody.put("object", objectName);
-		responseBody.put("url", template.getObjectURL(bucketName, objectName, expires));
+		responseBody.put("url", ossTemplate.getObjectURL(bucketName, objectName, expires));
 		responseBody.put("expires", expires);
 		return responseBody;
 	}
@@ -126,7 +131,7 @@ public class OssEndpoint {
 	@DeleteMapping("/object/{bucketName}/{objectName}/")
 	public void deleteObject(@PathVariable String bucketName, @PathVariable String objectName) {
 
-		template.removeObject(bucketName, objectName);
+		ossTemplate.removeObject(bucketName, objectName);
 	}
 
 }

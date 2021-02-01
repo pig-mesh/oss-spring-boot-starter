@@ -35,11 +35,16 @@ import org.springframework.context.annotation.Configuration;
  */
 @AllArgsConstructor
 @Configuration(proxyBeanMethods = false)
-@EnableConfigurationProperties({ OssProperties.class })
+@EnableConfigurationProperties({OssProperties.class})
 public class OssAutoConfiguration {
 
 	private final OssProperties properties;
 
+	/**
+	 * OSS操作模板
+	 *
+	 * @return OSS操作模板
+	 */
 	@Bean
 	@ConditionalOnMissingBean(OssTemplate.class)
 	@ConditionalOnProperty(prefix = OssProperties.PREFIX, name = "enable", havingValue = "true", matchIfMissing = true)
@@ -47,6 +52,12 @@ public class OssAutoConfiguration {
 		return new OssTemplate(properties);
 	}
 
+	/**
+	 * OSS端点信息
+	 *
+	 * @param template oss操作模版
+	 * @return oss远程服务端点
+	 */
 	@Bean
 	@ConditionalOnWebApplication
 	@ConditionalOnProperty(prefix = OssProperties.PREFIX, name = "info", havingValue = "true")
