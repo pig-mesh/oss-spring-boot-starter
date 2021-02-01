@@ -27,6 +27,7 @@ import java.util.Optional;
 @SpringBootTest
 @ActiveProfiles("minio")
 public class MinioOssTemplateTest {
+
 	/**
 	 * 测试用OSS名字
 	 */
@@ -90,4 +91,5 @@ public class MinioOssTemplateTest {
 		Optional<Bucket> afterDeleteBucket = ossTemplate.getBucket(TEST_BUCKET_NAME);
 		Assertions.assertEquals(Optional.empty(), afterDeleteBucket);
 	}
+
 }

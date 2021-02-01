@@ -42,7 +42,6 @@ public class OssAutoConfiguration {
 
 	/**
 	 * OSS操作模板
-	 *
 	 * @return OSS操作模板
 	 */
 	@Bean
@@ -54,7 +53,6 @@ public class OssAutoConfiguration {
 
 	/**
 	 * OSS端点信息
-	 *
 	 * @param template oss操作模版
 	 * @return oss远程服务端点
 	 */
