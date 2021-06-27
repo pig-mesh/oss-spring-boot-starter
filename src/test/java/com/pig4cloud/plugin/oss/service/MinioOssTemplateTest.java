@@ -88,6 +88,7 @@ public class MinioOssTemplateTest {
 	@Test
 	public void getObjectUrl() {
 		String url = ossTemplate.getObjectURL(TEST_BUCKET_NAME, TEST_OBJECT_NAME, 3);
+		System.out.println("URL: " + url);
 		// 断言生成的链接必定包含过期时间字段
 		Assertions.assertTrue(url.contains("X-Amz-Expires"));
 	}

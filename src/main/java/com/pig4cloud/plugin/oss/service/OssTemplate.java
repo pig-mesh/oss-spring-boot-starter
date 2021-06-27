@@ -119,7 +119,7 @@ public class OssTemplate implements InitializingBean {
 	}
 
 	/**
-	 * 获取文件外链
+	 * 获取文件外链，只用于下载
 	 *
 	 * @param bucketName bucket名称
 	 * @param objectName 文件名称
@@ -129,7 +129,7 @@ public class OssTemplate implements InitializingBean {
 	 */
 	@SneakyThrows
 	public String getObjectURL(String bucketName, String objectName, Integer expires) {
-		return getObjectURL(bucketName, objectName, expires, HttpMethod.PUT);
+		return getObjectURL(bucketName, objectName, expires, HttpMethod.GET);
 	}
 
 
@@ -139,7 +139,7 @@ public class OssTemplate implements InitializingBean {
 	 * @param bucketName bucket名称
 	 * @param objectName 文件名称
 	 * @param expires    过期时间，单位分钟,请注意该值必须小于7天
-	 * @param method     文件操作方法：GET（查看）、PUT（上传）
+	 * @param method     文件操作方法：GET（下载）、PUT（上传）
 	 * @return url
 	 * @see AmazonS3#generatePresignedUrl(String bucketName, String key, Date expiration, HttpMethod method)
 	 */
