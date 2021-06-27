@@ -18,6 +18,7 @@
 package com.pig4cloud.plugin.oss.service;
 
 import com.amazonaws.ClientConfiguration;
+import com.amazonaws.HttpMethod;
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
@@ -33,7 +34,10 @@ import org.springframework.beans.factory.InitializingBean;
 
 import java.io.InputStream;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * aws-s3 通用存储操作 支持所有兼容s3协议的云存储: {阿里云OSS，腾讯云COS，七牛云，京东云，minio 等}
@@ -52,6 +56,7 @@ public class OssTemplate implements InitializingBean {
 
 	/**
 	 * 创建bucket
+	 *
 	 * @param bucketName bucket名称
 	 */
 	@SneakyThrows
@@ -115,19 +120,41 @@ public class OssTemplate implements InitializingBean {
 
 	/**
 	 * 获取文件外链
+	 *
 	 * @param bucketName bucket名称
 	 * @param objectName 文件名称
-	 * @param expires 过期时间，单位分钟,请注意该值必须小于7天
+	 * @param expires    过期时间，单位分钟,请注意该值必须小于7天
 	 * @return url
 	 * @see AmazonS3#generatePresignedUrl(String bucketName, String key, Date expiration)
 	 */
 	@SneakyThrows
 	public String getObjectURL(String bucketName, String objectName, Integer expires) {
-		Date date = new Date();
-		Calendar calendar = new GregorianCalendar();
-		calendar.setTime(date);
-		calendar.add(Calendar.MINUTE, expires);
-		URL url = amazonS3.generatePresignedUrl(bucketName, objectName, calendar.getTime());
+		return getObjectURL(bucketName, objectName, expires, HttpMethod.PUT);
+	}
+
+
+	/**
+	 * 获取文件外链
+	 *
+	 * @param bucketName bucket名称
+	 * @param objectName 文件名称
+	 * @param expires    过期时间，单位分钟,请注意该值必须小于7天
+	 * @param method     文件操作方法：GET（查看）、PUT（上传）
+	 * @return url
+	 * @see AmazonS3#generatePresignedUrl(String bucketName, String key, Date expiration, HttpMethod method)
+	 */
+	@SneakyThrows
+	public String getObjectURL(String bucketName, String objectName, Integer expires, HttpMethod method) {
+		// Set the pre-signed URL to expire after `expires` minutes.
+		Date expiration = new Date();
+		long expTimeMillis = expiration.getTime();
+		expTimeMillis += 1000 * 60 * expires;
+		expiration.setTime(expTimeMillis);
+
+		// Generate the pre-signed URL.
+		URL url = amazonS3.generatePresignedUrl(new GeneratePresignedUrlRequest(bucketName, objectName)
+			.withMethod(method)
+			.withExpiration(expiration));
 		return url.toString();
 	}
 
@@ -137,10 +164,10 @@ public class OssTemplate implements InitializingBean {
 	 * If the object identified by the given bucket and key has public read permissions
 	 * (ex: {@link CannedAccessControlList#PublicRead}), then this URL can be directly
 	 * accessed to retrieve the object's data.
+	 *
 	 * @param bucketName bucket名称
 	 * @param objectName 文件名称
 	 * @return url
-	 *
 	 */
 	@SneakyThrows
 	public String getObjectURL(String bucketName, String objectName) {
@@ -150,6 +177,7 @@ public class OssTemplate implements InitializingBean {
 
 	/**
 	 * 获取文件
+	 *
 	 * @param bucketName bucket名称
 	 * @param objectName 文件名称
 	 * @return 二进制流
@@ -163,9 +191,10 @@ public class OssTemplate implements InitializingBean {
 
 	/**
 	 * 上传文件
+	 *
 	 * @param bucketName bucket名称
 	 * @param objectName 文件名称
-	 * @param stream 文件流
+	 * @param stream     文件流
 	 * @throws Exception
 	 */
 	public void putObject(String bucketName, String objectName, InputStream stream) throws Exception {
@@ -199,6 +228,7 @@ public class OssTemplate implements InitializingBean {
 
 	/**
 	 * 获取文件信息
+	 *
 	 * @param bucketName bucket名称
 	 * @param objectName 文件名称
 	 * @throws Exception
@@ -211,6 +241,7 @@ public class OssTemplate implements InitializingBean {
 
 	/**
 	 * 删除文件
+	 *
 	 * @param bucketName bucket名称
 	 * @param objectName 文件名称
 	 * @throws Exception
@@ -226,13 +257,12 @@ public class OssTemplate implements InitializingBean {
 	public void afterPropertiesSet() throws Exception {
 		ClientConfiguration clientConfiguration = new ClientConfiguration();
 		AwsClientBuilder.EndpointConfiguration endpointConfiguration = new AwsClientBuilder.EndpointConfiguration(
-				ossProperties.getEndpoint(), ossProperties.getRegion());
+			ossProperties.getEndpoint(), ossProperties.getRegion());
 		AWSCredentials awsCredentials = new BasicAWSCredentials(ossProperties.getAccessKey(),
-				ossProperties.getSecretKey());
+			ossProperties.getSecretKey());
 		AWSCredentialsProvider awsCredentialsProvider = new AWSStaticCredentialsProvider(awsCredentials);
 		this.amazonS3 = AmazonS3Client.builder().withEndpointConfiguration(endpointConfiguration)
-				.withClientConfiguration(clientConfiguration).withCredentials(awsCredentialsProvider)
-				.disableChunkedEncoding().withPathStyleAccessEnabled(ossProperties.getPathStyleAccess()).build();
+			.withClientConfiguration(clientConfiguration).withCredentials(awsCredentialsProvider)
+			.disableChunkedEncoding().withPathStyleAccessEnabled(ossProperties.getPathStyleAccess()).build();
 	}
-
 }
