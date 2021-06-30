@@ -17,7 +17,7 @@
 <dependency>
     <groupId>com.pig4cloud.plugin</groupId>
     <artifactId>oss-spring-boot-starter</artifactId>
-    <version>0.0.4</version>
+    <version>0.0.5</version>
 </dependency>
 ```
 

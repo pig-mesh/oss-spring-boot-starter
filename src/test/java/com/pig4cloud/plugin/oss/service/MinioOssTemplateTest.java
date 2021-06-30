@@ -55,7 +55,7 @@ public class MinioOssTemplateTest {
 	public void init() {
 		ossTemplate.createBucket(TEST_BUCKET_NAME);
 		ossTemplate.putObject(TEST_BUCKET_NAME, TEST_OBJECT_NAME,
-			new FileInputStream(ResourceUtils.getFile(ResourceUtils.CLASSPATH_URL_PREFIX + TEST_OBJECT_NAME)));
+				new FileInputStream(ResourceUtils.getFile(ResourceUtils.CLASSPATH_URL_PREFIX + TEST_OBJECT_NAME)));
 
 	}
 
@@ -112,7 +112,8 @@ public class MinioOssTemplateTest {
 		Assertions.assertTrue(url.contains("X-Amz-Expires"));
 		System.out.println("URL: " + url);
 
-		Assertions.assertThrows(Exception.class, () -> ossTemplate.getObject(TEST_BUCKET_NAME, TEST_UPLOAD_OBJECT_NAME));
+		Assertions.assertThrows(Exception.class,
+				() -> ossTemplate.getObject(TEST_BUCKET_NAME, TEST_UPLOAD_OBJECT_NAME));
 		Assertions.assertEquals(200, upload(url, testObjectContent));
 
 		S3Object s3Object = ossTemplate.getObject(TEST_BUCKET_NAME, TEST_UPLOAD_OBJECT_NAME);
@@ -132,17 +133,20 @@ public class MinioOssTemplateTest {
 		Assertions.assertTrue(url.contains("X-Amz-Expires"));
 		System.out.println("URL: " + url);
 
-		Assertions.assertThrows(Exception.class, () -> ossTemplate.getObject(TEST_BUCKET_NAME, TEST_UPLOAD_OBJECT_NAME));
+		Assertions.assertThrows(Exception.class,
+				() -> ossTemplate.getObject(TEST_BUCKET_NAME, TEST_UPLOAD_OBJECT_NAME));
 
 		Thread.sleep(1100 * 60);
 		Assertions.assertEquals(403, upload(url, testObjectContent));
 
-		Assertions.assertThrows(Exception.class, () -> ossTemplate.getObject(TEST_BUCKET_NAME, TEST_UPLOAD_OBJECT_NAME));
+		Assertions.assertThrows(Exception.class,
+				() -> ossTemplate.getObject(TEST_BUCKET_NAME, TEST_UPLOAD_OBJECT_NAME));
 	}
 
 	@SneakyThrows
 	private int upload(String url, String content) {
-		// Create the connection and use it to upload the new object using the pre-signed URL.
+		// Create the connection and use it to upload the new object using the pre-signed
+		// URL.
 		URL opurl = new URL(url);
 		HttpURLConnection connection = (HttpURLConnection) opurl.openConnection();
 		connection.setDoOutput(true);
@@ -151,9 +155,11 @@ public class MinioOssTemplateTest {
 		out.write(content);
 		out.close();
 
-		// Check the HTTP response code. To complete the upload and make the object available,
+		// Check the HTTP response code. To complete the upload and make the object
+		// available,
 		// you must interact with the connection object in some way.
 		System.out.println("HTTP response code: " + connection.getResponseCode());
 		return connection.getResponseCode();
 	}
+
 }

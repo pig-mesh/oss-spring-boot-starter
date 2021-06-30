@@ -56,7 +56,6 @@ public class OssTemplate implements InitializingBean {
 
 	/**
 	 * 创建bucket
-	 *
 	 * @param bucketName bucket名称
 	 */
 	@SneakyThrows
@@ -103,10 +102,9 @@ public class OssTemplate implements InitializingBean {
 
 	/**
 	 * 根据文件前置查询文件
-	 *
 	 * @param bucketName bucket名称
-	 * @param prefix     前缀
-	 * @param recursive  是否递归查询
+	 * @param prefix 前缀
+	 * @param recursive 是否递归查询
 	 * @return S3ObjectSummary 列表
 	 * @see <a href=
 	 * "http://docs.aws.amazon.com/goto/WebAPI/s3-2006-03-01/ListObjects">AWS API
@@ -120,10 +118,9 @@ public class OssTemplate implements InitializingBean {
 
 	/**
 	 * 获取文件外链，只用于下载
-	 *
 	 * @param bucketName bucket名称
 	 * @param objectName 文件名称
-	 * @param expires    过期时间，单位分钟,请注意该值必须小于7天
+	 * @param expires 过期时间，单位分钟,请注意该值必须小于7天
 	 * @return url
 	 * @see AmazonS3#generatePresignedUrl(String bucketName, String key, Date expiration)
 	 */
@@ -132,16 +129,15 @@ public class OssTemplate implements InitializingBean {
 		return getObjectURL(bucketName, objectName, expires, HttpMethod.GET);
 	}
 
-
 	/**
 	 * 获取文件外链
-	 *
 	 * @param bucketName bucket名称
 	 * @param objectName 文件名称
-	 * @param expires    过期时间，单位分钟,请注意该值必须小于7天
-	 * @param method     文件操作方法：GET（下载）、PUT（上传）
+	 * @param expires 过期时间，单位分钟,请注意该值必须小于7天
+	 * @param method 文件操作方法：GET（下载）、PUT（上传）
 	 * @return url
-	 * @see AmazonS3#generatePresignedUrl(String bucketName, String key, Date expiration, HttpMethod method)
+	 * @see AmazonS3#generatePresignedUrl(String bucketName, String key, Date expiration,
+	 * HttpMethod method)
 	 */
 	@SneakyThrows
 	public String getObjectURL(String bucketName, String objectName, Integer expires, HttpMethod method) {
@@ -152,9 +148,8 @@ public class OssTemplate implements InitializingBean {
 		expiration.setTime(expTimeMillis);
 
 		// Generate the pre-signed URL.
-		URL url = amazonS3.generatePresignedUrl(new GeneratePresignedUrlRequest(bucketName, objectName)
-			.withMethod(method)
-			.withExpiration(expiration));
+		URL url = amazonS3.generatePresignedUrl(
+				new GeneratePresignedUrlRequest(bucketName, objectName).withMethod(method).withExpiration(expiration));
 		return url.toString();
 	}
 
@@ -164,7 +159,6 @@ public class OssTemplate implements InitializingBean {
 	 * If the object identified by the given bucket and key has public read permissions
 	 * (ex: {@link CannedAccessControlList#PublicRead}), then this URL can be directly
 	 * accessed to retrieve the object's data.
-	 *
 	 * @param bucketName bucket名称
 	 * @param objectName 文件名称
 	 * @return url
@@ -177,7 +171,6 @@ public class OssTemplate implements InitializingBean {
 
 	/**
 	 * 获取文件
-	 *
 	 * @param bucketName bucket名称
 	 * @param objectName 文件名称
 	 * @return 二进制流
@@ -191,10 +184,9 @@ public class OssTemplate implements InitializingBean {
 
 	/**
 	 * 上传文件
-	 *
 	 * @param bucketName bucket名称
 	 * @param objectName 文件名称
-	 * @param stream     文件流
+	 * @param stream 文件流
 	 * @throws Exception
 	 */
 	public void putObject(String bucketName, String objectName, InputStream stream) throws Exception {
@@ -203,18 +195,17 @@ public class OssTemplate implements InitializingBean {
 
 	/**
 	 * 上传文件
-	 *
-	 * @param bucketName  bucket名称
-	 * @param objectName  文件名称
-	 * @param stream      文件流
-	 * @param size        大小
+	 * @param bucketName bucket名称
+	 * @param objectName 文件名称
+	 * @param stream 文件流
+	 * @param size 大小
 	 * @param contextType 类型
 	 * @throws Exception
 	 * @see <a href= "http://docs.aws.amazon.com/goto/WebAPI/s3-2006-03-01/PutObject">AWS
 	 * API Documentation</a>
 	 */
 	public PutObjectResult putObject(String bucketName, String objectName, InputStream stream, long size,
-									 String contextType) throws Exception {
+			String contextType) throws Exception {
 		ObjectMetadata objectMetadata = new ObjectMetadata();
 		objectMetadata.setContentLength(size);
 		objectMetadata.setContentType(contextType);
@@ -228,7 +219,6 @@ public class OssTemplate implements InitializingBean {
 
 	/**
 	 * 获取文件信息
-	 *
 	 * @param bucketName bucket名称
 	 * @param objectName 文件名称
 	 * @throws Exception
@@ -241,7 +231,6 @@ public class OssTemplate implements InitializingBean {
 
 	/**
 	 * 删除文件
-	 *
 	 * @param bucketName bucket名称
 	 * @param objectName 文件名称
 	 * @throws Exception
@@ -257,12 +246,13 @@ public class OssTemplate implements InitializingBean {
 	public void afterPropertiesSet() throws Exception {
 		ClientConfiguration clientConfiguration = new ClientConfiguration();
 		AwsClientBuilder.EndpointConfiguration endpointConfiguration = new AwsClientBuilder.EndpointConfiguration(
-			ossProperties.getEndpoint(), ossProperties.getRegion());
+				ossProperties.getEndpoint(), ossProperties.getRegion());
 		AWSCredentials awsCredentials = new BasicAWSCredentials(ossProperties.getAccessKey(),
-			ossProperties.getSecretKey());
+				ossProperties.getSecretKey());
 		AWSCredentialsProvider awsCredentialsProvider = new AWSStaticCredentialsProvider(awsCredentials);
 		this.amazonS3 = AmazonS3Client.builder().withEndpointConfiguration(endpointConfiguration)
-			.withClientConfiguration(clientConfiguration).withCredentials(awsCredentialsProvider)
-			.disableChunkedEncoding().withPathStyleAccessEnabled(ossProperties.getPathStyleAccess()).build();
+				.withClientConfiguration(clientConfiguration).withCredentials(awsCredentialsProvider)
+				.disableChunkedEncoding().withPathStyleAccessEnabled(ossProperties.getPathStyleAccess()).build();
 	}
+
 }

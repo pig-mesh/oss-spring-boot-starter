@@ -35,7 +35,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @AllArgsConstructor
 @Configuration(proxyBeanMethods = false)
-@EnableConfigurationProperties({OssProperties.class})
+@EnableConfigurationProperties({ OssProperties.class })
 public class OssAutoConfiguration {
 
 	private final OssProperties properties;

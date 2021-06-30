@@ -73,7 +73,7 @@ public class OssEndpoint {
 	@GetMapping("/bucket/{bucketName}")
 	public Bucket getBucket(@PathVariable String bucketName) {
 		return ossTemplate.getBucket(bucketName)
-			.orElseThrow(() -> new IllegalArgumentException("Bucket Name not found!"));
+				.orElseThrow(() -> new IllegalArgumentException("Bucket Name not found!"));
 	}
 
 	@SneakyThrows
@@ -100,7 +100,7 @@ public class OssEndpoint {
 	public S3Object createObject(@RequestBody MultipartFile object, @PathVariable String bucketName,
 			@PathVariable String objectName) {
 		ossTemplate.putObject(bucketName, objectName, object.getInputStream(), object.getSize(),
-			object.getContentType());
+				object.getContentType());
 		return ossTemplate.getObjectInfo(bucketName, objectName);
 
 	}
