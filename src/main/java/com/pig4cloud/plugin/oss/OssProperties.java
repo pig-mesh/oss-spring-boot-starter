@@ -41,6 +41,11 @@ public class OssProperties {
 	public static final String PREFIX = "oss";
 
 	/**
+	 * 是否启用 oss，默认为：true
+	 */
+	private boolean enable = true;
+
+	/**
 	 * 对象存储服务的URL
 	 */
 	private String endpoint;
@@ -56,11 +61,6 @@ public class OssProperties {
 	 * 模式{http://bucketname.endpoint}
 	 */
 	private Boolean pathStyleAccess = true;
-
-	/**
-	 * 应用ID
-	 */
-	private String appId;
 
 	/**
 	 * 区域

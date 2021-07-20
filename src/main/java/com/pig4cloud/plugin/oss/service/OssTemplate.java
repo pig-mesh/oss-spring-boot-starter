@@ -34,6 +34,8 @@ import org.springframework.beans.factory.InitializingBean;
 
 import java.io.InputStream;
 import java.net.URL;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -44,6 +46,7 @@ import java.util.Optional;
  *
  * @author lengleng
  * @author 858695266
+ * @author L.cm
  * @date 2020/5/23 6:36 上午
  * @since 1.0
  */
@@ -104,8 +107,6 @@ public class OssTemplate implements InitializingBean {
 	 * 根据文件前置查询文件
 	 * @param bucketName bucket名称
 	 * @param prefix 前缀
-	 * @param recursive 是否递归查询
-	 * @return S3ObjectSummary 列表
 	 * @see <a href=
 	 * "http://docs.aws.amazon.com/goto/WebAPI/s3-2006-03-01/ListObjects">AWS API
 	 * Documentation</a>
@@ -120,32 +121,83 @@ public class OssTemplate implements InitializingBean {
 	 * 获取文件外链，只用于下载
 	 * @param bucketName bucket名称
 	 * @param objectName 文件名称
-	 * @param expires 过期时间，单位分钟,请注意该值必须小于7天
+	 * @param minutes 过期时间，单位分钟,请注意该值必须小于7天
 	 * @return url
 	 * @see AmazonS3#generatePresignedUrl(String bucketName, String key, Date expiration)
 	 */
 	@SneakyThrows
-	public String getObjectURL(String bucketName, String objectName, Integer expires) {
+	public String getObjectURL(String bucketName, String objectName, int minutes) {
+		return getObjectURL(bucketName, objectName, Duration.ofMinutes(minutes));
+	}
+
+	/**
+	 * 获取文件外链，只用于下载
+	 * @param bucketName bucket名称
+	 * @param objectName 文件名称
+	 * @param expires 过期时间,请注意该值必须小于7天
+	 * @return url
+	 * @see AmazonS3#generatePresignedUrl(String bucketName, String key, Date expiration)
+	 */
+	@SneakyThrows
+	public String getObjectURL(String bucketName, String objectName, Duration expires) {
 		return getObjectURL(bucketName, objectName, expires, HttpMethod.GET);
+	}
+
+	/**
+	 * 获取文件上传外链，只用于上传
+	 * @param bucketName bucket名称
+	 * @param objectName 文件名称
+	 * @param minutes 过期时间，单位分钟,请注意该值必须小于7天
+	 * @return url
+	 * @see AmazonS3#generatePresignedUrl(String bucketName, String key, Date expiration)
+	 */
+	@SneakyThrows
+	public String getPutObjectURL(String bucketName, String objectName, int minutes) {
+		return getObjectURL(bucketName, objectName, Duration.ofMinutes(minutes));
+	}
+
+	/**
+	 * 获取文件上传外链，只用于上传
+	 * @param bucketName bucket名称
+	 * @param objectName 文件名称
+	 * @param expires 过期时间,请注意该值必须小于7天
+	 * @return url
+	 * @see AmazonS3#generatePresignedUrl(String bucketName, String key, Date expiration)
+	 */
+	@SneakyThrows
+	public String getPutObjectURL(String bucketName, String objectName, Duration expires) {
+		return getObjectURL(bucketName, objectName, expires, HttpMethod.PUT);
 	}
 
 	/**
 	 * 获取文件外链
 	 * @param bucketName bucket名称
 	 * @param objectName 文件名称
-	 * @param expires 过期时间，单位分钟,请注意该值必须小于7天
+	 * @param minutes 过期时间，单位分钟,请注意该值必须小于7天
 	 * @param method 文件操作方法：GET（下载）、PUT（上传）
 	 * @return url
 	 * @see AmazonS3#generatePresignedUrl(String bucketName, String key, Date expiration,
 	 * HttpMethod method)
 	 */
 	@SneakyThrows
-	public String getObjectURL(String bucketName, String objectName, Integer expires, HttpMethod method) {
-		// Set the pre-signed URL to expire after `expires` minutes.
-		Date expiration = new Date();
-		long expTimeMillis = expiration.getTime();
-		expTimeMillis += 1000 * 60 * expires;
-		expiration.setTime(expTimeMillis);
+	public String getObjectURL(String bucketName, String objectName, int minutes, HttpMethod method) {
+		return getObjectURL(bucketName, objectName, Duration.ofMinutes(minutes), method);
+	}
+
+	/**
+	 * 获取文件外链
+	 * @param bucketName bucket名称
+	 * @param objectName 文件名称
+	 * @param expires 过期时间，请注意该值必须小于7天
+	 * @param method 文件操作方法：GET（下载）、PUT（上传）
+	 * @return url
+	 * @see AmazonS3#generatePresignedUrl(String bucketName, String key, Date expiration,
+	 * HttpMethod method)
+	 */
+	@SneakyThrows
+	public String getObjectURL(String bucketName, String objectName, Duration expires, HttpMethod method) {
+		// Set the pre-signed URL to expire after `expires`.
+		Date expiration = Date.from(Instant.now().plus(expires));
 
 		// Generate the pre-signed URL.
 		URL url = amazonS3.generatePresignedUrl(

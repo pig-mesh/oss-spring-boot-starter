@@ -43,7 +43,7 @@ import java.util.Map;
 @AutoIgnore
 @RestController
 @AllArgsConstructor
-@RequestMapping("/oss")
+@RequestMapping("${oss.http.prefix:}/oss")
 public class OssEndpoint {
 
 	/**
@@ -57,10 +57,8 @@ public class OssEndpoint {
 	@SneakyThrows
 	@PostMapping("/bucket/{bucketName}")
 	public Bucket createBucket(@PathVariable String bucketName) {
-
 		ossTemplate.createBucket(bucketName);
 		return ossTemplate.getBucket(bucketName).get();
-
 	}
 
 	@SneakyThrows

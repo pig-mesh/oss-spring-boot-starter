@@ -19,7 +19,6 @@ package com.pig4cloud.plugin.oss;
 
 import com.pig4cloud.plugin.oss.http.OssEndpoint;
 import com.pig4cloud.plugin.oss.service.OssTemplate;
-import lombok.AllArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
@@ -32,13 +31,11 @@ import org.springframework.context.annotation.Configuration;
  *
  * @author lengleng
  * @author 858695266
+ * @author L.cm
  */
-@AllArgsConstructor
 @Configuration(proxyBeanMethods = false)
 @EnableConfigurationProperties({ OssProperties.class })
 public class OssAutoConfiguration {
-
-	private final OssProperties properties;
 
 	/**
 	 * OSS操作模板
@@ -47,7 +44,7 @@ public class OssAutoConfiguration {
 	@Bean
 	@ConditionalOnMissingBean(OssTemplate.class)
 	@ConditionalOnProperty(prefix = OssProperties.PREFIX, name = "enable", havingValue = "true", matchIfMissing = true)
-	public OssTemplate ossTemplate() {
+	public OssTemplate ossTemplate(OssProperties properties) {
 		return new OssTemplate(properties);
 	}
 
@@ -58,7 +55,7 @@ public class OssAutoConfiguration {
 	 */
 	@Bean
 	@ConditionalOnWebApplication
-	@ConditionalOnProperty(prefix = OssProperties.PREFIX, name = "info", havingValue = "true")
+	@ConditionalOnProperty(prefix = OssProperties.PREFIX, name = "http.enable", havingValue = "true")
 	public OssEndpoint ossEndpoint(OssTemplate template) {
 		return new OssEndpoint(template);
 	}

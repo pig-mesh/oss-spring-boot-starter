@@ -1,0 +1,16 @@
+{
+  "properties": [
+    {
+      "name": "oss.http.enable",
+      "type": "java.lang.Boolean",
+      "description": "开启 oss http 端点."
+    },
+    {
+      "name": "oss.http.prefix",
+      "type": "java.lang.String",
+      "description": "oss http 路由端点前缀.",
+      "defaultValue": ""
+    }
+  ]
+}
+
