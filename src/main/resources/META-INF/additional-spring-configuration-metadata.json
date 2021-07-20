@@ -3,7 +3,8 @@
     {
       "name": "oss.http.enable",
       "type": "java.lang.Boolean",
-      "description": "开启 oss http 端点."
+      "description": "开启 oss http 端点.",
+      "defaultValue": "false"
     },
     {
       "name": "oss.http.prefix",
