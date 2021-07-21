@@ -29,9 +29,9 @@ import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.*;
 import com.pig4cloud.plugin.oss.OssProperties;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import org.springframework.beans.factory.InitializingBean;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.time.Duration;
@@ -61,7 +61,6 @@ public class OssTemplate implements InitializingBean {
 	 * 创建bucket
 	 * @param bucketName bucket名称
 	 */
-	@SneakyThrows
 	public void createBucket(String bucketName) {
 		if (!amazonS3.doesBucketExistV2(bucketName)) {
 			amazonS3.createBucket((bucketName));
@@ -76,7 +75,6 @@ public class OssTemplate implements InitializingBean {
 	 * "http://docs.aws.amazon.com/goto/WebAPI/s3-2006-03-01/ListBuckets">AWS API
 	 * Documentation</a>
 	 */
-	@SneakyThrows
 	public List<Bucket> getAllBuckets() {
 		return amazonS3.listBuckets();
 	}
@@ -87,7 +85,6 @@ public class OssTemplate implements InitializingBean {
 	 * "http://docs.aws.amazon.com/goto/WebAPI/s3-2006-03-01/ListBuckets">AWS API
 	 * Documentation</a>
 	 */
-	@SneakyThrows
 	public Optional<Bucket> getBucket(String bucketName) {
 		return amazonS3.listBuckets().stream().filter(b -> b.getName().equals(bucketName)).findFirst();
 	}
@@ -98,7 +95,6 @@ public class OssTemplate implements InitializingBean {
 	 * "http://docs.aws.amazon.com/goto/WebAPI/s3-2006-03-01/DeleteBucket">AWS API
 	 * Documentation</a>
 	 */
-	@SneakyThrows
 	public void removeBucket(String bucketName) {
 		amazonS3.deleteBucket(bucketName);
 	}
@@ -111,7 +107,6 @@ public class OssTemplate implements InitializingBean {
 	 * "http://docs.aws.amazon.com/goto/WebAPI/s3-2006-03-01/ListObjects">AWS API
 	 * Documentation</a>
 	 */
-	@SneakyThrows
 	public List<S3ObjectSummary> getAllObjectsByPrefix(String bucketName, String prefix) {
 		ObjectListing objectListing = amazonS3.listObjects(bucketName, prefix);
 		return new ArrayList<>(objectListing.getObjectSummaries());
@@ -125,7 +120,6 @@ public class OssTemplate implements InitializingBean {
 	 * @return url
 	 * @see AmazonS3#generatePresignedUrl(String bucketName, String key, Date expiration)
 	 */
-	@SneakyThrows
 	public String getObjectURL(String bucketName, String objectName, int minutes) {
 		return getObjectURL(bucketName, objectName, Duration.ofMinutes(minutes));
 	}
@@ -138,7 +132,6 @@ public class OssTemplate implements InitializingBean {
 	 * @return url
 	 * @see AmazonS3#generatePresignedUrl(String bucketName, String key, Date expiration)
 	 */
-	@SneakyThrows
 	public String getObjectURL(String bucketName, String objectName, Duration expires) {
 		return getObjectURL(bucketName, objectName, expires, HttpMethod.GET);
 	}
@@ -151,7 +144,6 @@ public class OssTemplate implements InitializingBean {
 	 * @return url
 	 * @see AmazonS3#generatePresignedUrl(String bucketName, String key, Date expiration)
 	 */
-	@SneakyThrows
 	public String getPutObjectURL(String bucketName, String objectName, int minutes) {
 		return getObjectURL(bucketName, objectName, Duration.ofMinutes(minutes));
 	}
@@ -164,7 +156,6 @@ public class OssTemplate implements InitializingBean {
 	 * @return url
 	 * @see AmazonS3#generatePresignedUrl(String bucketName, String key, Date expiration)
 	 */
-	@SneakyThrows
 	public String getPutObjectURL(String bucketName, String objectName, Duration expires) {
 		return getObjectURL(bucketName, objectName, expires, HttpMethod.PUT);
 	}
@@ -179,7 +170,6 @@ public class OssTemplate implements InitializingBean {
 	 * @see AmazonS3#generatePresignedUrl(String bucketName, String key, Date expiration,
 	 * HttpMethod method)
 	 */
-	@SneakyThrows
 	public String getObjectURL(String bucketName, String objectName, int minutes, HttpMethod method) {
 		return getObjectURL(bucketName, objectName, Duration.ofMinutes(minutes), method);
 	}
@@ -194,7 +184,6 @@ public class OssTemplate implements InitializingBean {
 	 * @see AmazonS3#generatePresignedUrl(String bucketName, String key, Date expiration,
 	 * HttpMethod method)
 	 */
-	@SneakyThrows
 	public String getObjectURL(String bucketName, String objectName, Duration expires, HttpMethod method) {
 		// Set the pre-signed URL to expire after `expires`.
 		Date expiration = Date.from(Instant.now().plus(expires));
@@ -215,7 +204,6 @@ public class OssTemplate implements InitializingBean {
 	 * @param objectName 文件名称
 	 * @return url
 	 */
-	@SneakyThrows
 	public String getObjectURL(String bucketName, String objectName) {
 		URL url = amazonS3.getUrl(bucketName, objectName);
 		return url.toString();
@@ -229,7 +217,6 @@ public class OssTemplate implements InitializingBean {
 	 * @see <a href= "http://docs.aws.amazon.com/goto/WebAPI/s3-2006-03-01/GetObject">AWS
 	 * API Documentation</a>
 	 */
-	@SneakyThrows
 	public S3Object getObject(String bucketName, String objectName) {
 		return amazonS3.getObject(bucketName, objectName);
 	}
@@ -239,9 +226,9 @@ public class OssTemplate implements InitializingBean {
 	 * @param bucketName bucket名称
 	 * @param objectName 文件名称
 	 * @param stream 文件流
-	 * @throws Exception
+	 * @throws IOException IOException
 	 */
-	public void putObject(String bucketName, String objectName, InputStream stream) throws Exception {
+	public void putObject(String bucketName, String objectName, InputStream stream) throws IOException {
 		putObject(bucketName, objectName, stream, stream.available(), "application/octet-stream");
 	}
 
@@ -252,12 +239,11 @@ public class OssTemplate implements InitializingBean {
 	 * @param stream 文件流
 	 * @param size 大小
 	 * @param contextType 类型
-	 * @throws Exception
 	 * @see <a href= "http://docs.aws.amazon.com/goto/WebAPI/s3-2006-03-01/PutObject">AWS
 	 * API Documentation</a>
 	 */
 	public PutObjectResult putObject(String bucketName, String objectName, InputStream stream, long size,
-			String contextType) throws Exception {
+			String contextType) {
 		ObjectMetadata objectMetadata = new ObjectMetadata();
 		objectMetadata.setContentLength(size);
 		objectMetadata.setContentType(contextType);
@@ -273,11 +259,10 @@ public class OssTemplate implements InitializingBean {
 	 * 获取文件信息
 	 * @param bucketName bucket名称
 	 * @param objectName 文件名称
-	 * @throws Exception
 	 * @see <a href= "http://docs.aws.amazon.com/goto/WebAPI/s3-2006-03-01/GetObject">AWS
 	 * API Documentation</a>
 	 */
-	public S3Object getObjectInfo(String bucketName, String objectName) throws Exception {
+	public S3Object getObjectInfo(String bucketName, String objectName) {
 		return amazonS3.getObject(bucketName, objectName);
 	}
 
@@ -285,12 +270,11 @@ public class OssTemplate implements InitializingBean {
 	 * 删除文件
 	 * @param bucketName bucket名称
 	 * @param objectName 文件名称
-	 * @throws Exception
 	 * @see <a href=
 	 * "http://docs.aws.amazon.com/goto/WebAPI/s3-2006-03-01/DeleteObject">AWS API
 	 * Documentation</a>
 	 */
-	public void removeObject(String bucketName, String objectName) throws Exception {
+	public void removeObject(String bucketName, String objectName) {
 		amazonS3.deleteObject(bucketName, objectName);
 	}
 

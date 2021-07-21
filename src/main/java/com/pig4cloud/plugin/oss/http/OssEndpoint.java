@@ -21,13 +21,17 @@ import com.amazonaws.services.s3.model.Bucket;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
 import com.pig4cloud.plugin.oss.service.OssTemplate;
-import lombok.AllArgsConstructor;
+import io.swagger.annotations.Api;
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import net.dreamlu.mica.auto.annotation.AutoIgnore;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,10 +44,12 @@ import java.util.Map;
  * <p>
  * oss.info
  */
+@Validated
 @AutoIgnore
 @RestController
-@AllArgsConstructor
+@RequiredArgsConstructor
 @RequestMapping("${oss.http.prefix:}/oss")
+@Api(tags = "oss:http接口")
 public class OssEndpoint {
 
 	/**
@@ -54,30 +60,26 @@ public class OssEndpoint {
 	/**
 	 * Bucket Endpoints
 	 */
-	@SneakyThrows
 	@PostMapping("/bucket/{bucketName}")
-	public Bucket createBucket(@PathVariable String bucketName) {
+	public Bucket createBucket(@PathVariable @NotBlank String bucketName) {
 		ossTemplate.createBucket(bucketName);
 		return ossTemplate.getBucket(bucketName).get();
 	}
 
-	@SneakyThrows
 	@GetMapping("/bucket")
 	public List<Bucket> getBuckets() {
 		return ossTemplate.getAllBuckets();
 	}
 
-	@SneakyThrows
 	@GetMapping("/bucket/{bucketName}")
-	public Bucket getBucket(@PathVariable String bucketName) {
+	public Bucket getBucket(@PathVariable @NotBlank String bucketName) {
 		return ossTemplate.getBucket(bucketName)
 				.orElseThrow(() -> new IllegalArgumentException("Bucket Name not found!"));
 	}
 
-	@SneakyThrows
 	@DeleteMapping("/bucket/{bucketName}")
 	@ResponseStatus(HttpStatus.ACCEPTED)
-	public void deleteBucket(@PathVariable String bucketName) {
+	public void deleteBucket(@PathVariable @NotBlank String bucketName) {
 		ossTemplate.removeBucket(bucketName);
 	}
 
@@ -86,7 +88,8 @@ public class OssEndpoint {
 	 */
 	@SneakyThrows
 	@PostMapping("/object/{bucketName}")
-	public S3Object createObject(@RequestBody MultipartFile object, @PathVariable String bucketName) {
+	public S3Object createObject(@RequestBody @NotNull MultipartFile object,
+			@PathVariable @NotBlank String bucketName) {
 		String name = object.getOriginalFilename();
 		ossTemplate.putObject(bucketName, name, object.getInputStream(), object.getSize(), object.getContentType());
 		return ossTemplate.getObjectInfo(bucketName, name);
@@ -95,26 +98,22 @@ public class OssEndpoint {
 
 	@SneakyThrows
 	@PostMapping("/object/{bucketName}/{objectName}")
-	public S3Object createObject(@RequestBody MultipartFile object, @PathVariable String bucketName,
-			@PathVariable String objectName) {
+	public S3Object createObject(@RequestBody @NotNull MultipartFile object, @PathVariable @NotBlank String bucketName,
+			@PathVariable @NotBlank String objectName) {
 		ossTemplate.putObject(bucketName, objectName, object.getInputStream(), object.getSize(),
 				object.getContentType());
 		return ossTemplate.getObjectInfo(bucketName, objectName);
-
 	}
 
-	@SneakyThrows
 	@GetMapping("/object/{bucketName}/{objectName}")
-	public List<S3ObjectSummary> filterObject(@PathVariable String bucketName, @PathVariable String objectName) {
-
+	public List<S3ObjectSummary> filterObject(@PathVariable @NotBlank String bucketName,
+			@PathVariable @NotBlank String objectName) {
 		return ossTemplate.getAllObjectsByPrefix(bucketName, objectName);
-
 	}
 
-	@SneakyThrows
 	@GetMapping("/object/{bucketName}/{objectName}/{expires}")
-	public Map<String, Object> getObject(@PathVariable String bucketName, @PathVariable String objectName,
-			@PathVariable Integer expires) {
+	public Map<String, Object> getObjectUrl(@PathVariable @NotBlank String bucketName,
+			@PathVariable @NotBlank String objectName, @PathVariable @NotNull Integer expires) {
 		Map<String, Object> responseBody = new HashMap<>(8);
 		// Put Object info
 		responseBody.put("bucket", bucketName);
@@ -124,11 +123,21 @@ public class OssEndpoint {
 		return responseBody;
 	}
 
-	@SneakyThrows
+	@GetMapping("/object/put/{bucketName}/{objectName}/{expires}")
+	public Map<String, Object> getPutObjectUrl(@PathVariable @NotBlank String bucketName,
+			@PathVariable @NotBlank String objectName, @PathVariable @NotNull Integer expires) {
+		Map<String, Object> responseBody = new HashMap<>(8);
+		// Put Object info
+		responseBody.put("bucket", bucketName);
+		responseBody.put("object", objectName);
+		responseBody.put("url", ossTemplate.getPutObjectURL(bucketName, objectName, expires));
+		responseBody.put("expires", expires);
+		return responseBody;
+	}
+
 	@ResponseStatus(HttpStatus.ACCEPTED)
 	@DeleteMapping("/object/{bucketName}/{objectName}/")
-	public void deleteObject(@PathVariable String bucketName, @PathVariable String objectName) {
-
+	public void deleteObject(@PathVariable @NotBlank String bucketName, @PathVariable @NotBlank String objectName) {
 		ossTemplate.removeObject(bucketName, objectName);
 	}
 
