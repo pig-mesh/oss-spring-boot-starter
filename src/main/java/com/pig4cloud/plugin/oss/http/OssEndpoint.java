@@ -18,10 +18,12 @@
 package com.pig4cloud.plugin.oss.http;
 
 import com.amazonaws.services.s3.model.Bucket;
+import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
 import com.pig4cloud.plugin.oss.service.OssTemplate;
 import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import net.dreamlu.mica.auto.annotation.AutoIgnore;
@@ -50,6 +52,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 @RequestMapping("${oss.http.prefix:}/oss")
 @Api(tags = "oss:http接口")
+@Tag(name = "OssEndpoint", description = "oss:http接口")
 public class OssEndpoint {
 
 	/**
@@ -88,21 +91,39 @@ public class OssEndpoint {
 	 */
 	@SneakyThrows
 	@PostMapping("/object/{bucketName}")
-	public S3Object createObject(@RequestBody @NotNull MultipartFile object,
+	public S3ObjectSummary createObject(@RequestBody @NotNull MultipartFile object,
 			@PathVariable @NotBlank String bucketName) {
 		String name = object.getOriginalFilename();
 		ossTemplate.putObject(bucketName, name, object.getInputStream(), object.getSize(), object.getContentType());
-		return ossTemplate.getObjectInfo(bucketName, name);
-
+		S3Object objectInfo = ossTemplate.getObjectInfo(bucketName, name);
+		ObjectMetadata objectMetadata = objectInfo.getObjectMetadata();
+		S3ObjectSummary objectSummary = new S3ObjectSummary();
+		objectSummary.setKey(objectInfo.getKey());
+		objectSummary.setBucketName(bucketName);
+		objectSummary.setETag(objectMetadata.getETag());
+		objectSummary.setLastModified(objectMetadata.getLastModified());
+		objectSummary.setSize(objectMetadata.getContentLength());
+		return objectSummary;
 	}
 
+	/**
+	 * Object Endpoints
+	 */
 	@SneakyThrows
 	@PostMapping("/object/{bucketName}/{objectName}")
-	public S3Object createObject(@RequestBody @NotNull MultipartFile object, @PathVariable @NotBlank String bucketName,
-			@PathVariable @NotBlank String objectName) {
+	public S3ObjectSummary createObject(@RequestBody @NotNull MultipartFile object,
+			@PathVariable @NotBlank String bucketName, @PathVariable @NotBlank String objectName) {
 		ossTemplate.putObject(bucketName, objectName, object.getInputStream(), object.getSize(),
 				object.getContentType());
-		return ossTemplate.getObjectInfo(bucketName, objectName);
+		S3Object objectInfo = ossTemplate.getObjectInfo(bucketName, objectName);
+		ObjectMetadata objectMetadata = objectInfo.getObjectMetadata();
+		S3ObjectSummary objectSummary = new S3ObjectSummary();
+		objectSummary.setKey(objectInfo.getKey());
+		objectSummary.setBucketName(bucketName);
+		objectSummary.setETag(objectMetadata.getETag());
+		objectSummary.setLastModified(objectMetadata.getLastModified());
+		objectSummary.setSize(objectMetadata.getContentLength());
+		return objectSummary;
 	}
 
 	@GetMapping("/object/{bucketName}/{objectName}")
