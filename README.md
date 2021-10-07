@@ -17,7 +17,7 @@
 <dependency>
     <groupId>com.pig4cloud.plugin</groupId>
     <artifactId>oss-spring-boot-starter</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.2</version>
 </dependency>
 ```
 
@@ -27,19 +27,9 @@
 
 ```yaml
 oss:
-  http:
-    enable: true # 开启内置 http 接口，默认：false
-    prefix: "/api" # 内置 http 接口前缀，默认：空
-  # 使用云OSS  需要关闭
-  path-style-access: false 
-  # 对应上图 ③ 处配置
-  endpoint: s3-cn-east-1.qiniucs.com 
-  # 上文创建的AK, 一定注意复制完整不要有空格
-  access-key: xxx   
-  # 上文创建的SK, 一定注意复制完整不要有空格
-  secret-key: xxx   
-  # 上文创建的桶名称
-  bucketName: pig4cloud 
+  endpoint: http://minio.pig4cloud.com
+  access-key: lengleng
+  secret-key: lengleng
 ```
 
 ### 代码使用
