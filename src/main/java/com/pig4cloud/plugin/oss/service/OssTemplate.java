@@ -145,7 +145,7 @@ public class OssTemplate implements InitializingBean {
 	 * @see AmazonS3#generatePresignedUrl(String bucketName, String key, Date expiration)
 	 */
 	public String getPutObjectURL(String bucketName, String objectName, int minutes) {
-		return getObjectURL(bucketName, objectName, Duration.ofMinutes(minutes));
+		return getPutObjectURL(bucketName, objectName, Duration.ofMinutes(minutes));
 	}
 
 	/**
