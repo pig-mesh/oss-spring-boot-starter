@@ -233,6 +233,19 @@ public class OssTemplate implements InitializingBean {
 	}
 
 	/**
+	 * 上传文件 指定 contextType
+	 * @param bucketName bucket名称
+	 * @param objectName 文件名称
+	 * @param stream 文件流
+	 * @param contextType 文件类型
+	 * @throws IOException IOException
+	 */
+	public void putObject(String bucketName, String objectName, String contextType, InputStream stream)
+			throws IOException {
+		putObject(bucketName, objectName, stream, stream.available(), contextType);
+	}
+
+	/**
 	 * 上传文件
 	 * @param bucketName bucket名称
 	 * @param objectName 文件名称
