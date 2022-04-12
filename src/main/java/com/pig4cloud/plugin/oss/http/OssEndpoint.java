@@ -99,7 +99,7 @@ public class OssEndpoint {
 		InputStream inputStream = object.getInputStream();
 		String name = object.getOriginalFilename();
 
-		ossTemplate.putObject(bucketName, name,inputStream, object.getSize(), object.getContentType());
+		ossTemplate.putObject(bucketName, name, inputStream, object.getSize(), object.getContentType());
 		S3Object objectInfo = ossTemplate.getObjectInfo(bucketName, name);
 		ObjectMetadata objectMetadata = objectInfo.getObjectMetadata();
 		S3ObjectSummary objectSummary = new S3ObjectSummary();
@@ -120,8 +120,7 @@ public class OssEndpoint {
 			@PathVariable @NotBlank String bucketName, @PathVariable @NotBlank String objectName) {
 		@Cleanup
 		InputStream inputStream = object.getInputStream();
-		ossTemplate.putObject(bucketName, objectName,inputStream , object.getSize(),
-				object.getContentType());
+		ossTemplate.putObject(bucketName, objectName, inputStream, object.getSize(), object.getContentType());
 		S3Object objectInfo = ossTemplate.getObjectInfo(bucketName, objectName);
 		ObjectMetadata objectMetadata = objectInfo.getObjectMetadata();
 		S3ObjectSummary objectSummary = new S3ObjectSummary();
