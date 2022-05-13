@@ -24,6 +24,7 @@ import com.amazonaws.services.s3.model.S3ObjectSummary;
 import com.pig4cloud.plugin.oss.service.OssTemplate;
 import io.swagger.annotations.Api;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.Cleanup;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import net.dreamlu.mica.auto.annotation.AutoIgnore;
@@ -34,6 +35,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -93,8 +95,11 @@ public class OssEndpoint {
 	@PostMapping("/object/{bucketName}")
 	public S3ObjectSummary createObject(@RequestBody @NotNull MultipartFile object,
 			@PathVariable @NotBlank String bucketName) {
+		@Cleanup
+		InputStream inputStream = object.getInputStream();
 		String name = object.getOriginalFilename();
-		ossTemplate.putObject(bucketName, name, object.getInputStream(), object.getSize(), object.getContentType());
+
+		ossTemplate.putObject(bucketName, name, inputStream, object.getSize(), object.getContentType());
 		S3Object objectInfo = ossTemplate.getObjectInfo(bucketName, name);
 		ObjectMetadata objectMetadata = objectInfo.getObjectMetadata();
 		S3ObjectSummary objectSummary = new S3ObjectSummary();
@@ -113,8 +118,9 @@ public class OssEndpoint {
 	@PostMapping("/object/{bucketName}/{objectName}")
 	public S3ObjectSummary createObject(@RequestBody @NotNull MultipartFile object,
 			@PathVariable @NotBlank String bucketName, @PathVariable @NotBlank String objectName) {
-		ossTemplate.putObject(bucketName, objectName, object.getInputStream(), object.getSize(),
-				object.getContentType());
+		@Cleanup
+		InputStream inputStream = object.getInputStream();
+		ossTemplate.putObject(bucketName, objectName, inputStream, object.getSize(), object.getContentType());
 		S3Object objectInfo = ossTemplate.getObjectInfo(bucketName, objectName);
 		ObjectMetadata objectMetadata = objectInfo.getObjectMetadata();
 		S3ObjectSummary objectSummary = new S3ObjectSummary();
