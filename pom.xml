@@ -16,7 +16,7 @@
 
 	<properties>
 		<java.version>1.8</java.version>
-		<aws.version>1.12.218</aws.version>
+		<aws.version>1.12.261</aws.version>
 		<mica.auto.version>2.2.2</mica.auto.version>
 		<swagger.version>1.5.22</swagger.version>
 		<swagger.v3.version>2.1.10</swagger.v3.version>
