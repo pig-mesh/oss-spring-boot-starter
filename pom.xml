@@ -17,7 +17,7 @@
 	<properties>
 		<java.version>17</java.version>
 		<aws.version>1.12.261</aws.version>
-		<mica.auto.version>2.2.2</mica.auto.version>
+		<mica.auto.version>3.0.0</mica.auto.version>
 		<swagger.version>1.5.22</swagger.version>
 		<swagger.v3.version>2.1.10</swagger.v3.version>
 		<spring.checkstyle.plugin>0.0.29</spring.checkstyle.plugin>
