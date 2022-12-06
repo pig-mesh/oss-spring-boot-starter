@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.pig4cloud.plugin</groupId>
 	<artifactId>oss-spring-boot-starter</artifactId>
-	<version>3.0.0-SNAPSHOT</version>
+	<version>3.0.0</version>
 	<name>oss-spring-boot-starter</name>
 	<description>兼容S3 协议的通用文件存储工具类</description>
 
