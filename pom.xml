@@ -10,14 +10,14 @@
 	</parent>
 	<groupId>com.pig4cloud.plugin</groupId>
 	<artifactId>oss-spring-boot-starter</artifactId>
-	<version>1.1.0-SNAPSHOT</version>
+	<version>3.0.0-SNAPSHOT</version>
 	<name>oss-spring-boot-starter</name>
 	<description>兼容S3 协议的通用文件存储工具类</description>
 
 	<properties>
 		<java.version>17</java.version>
 		<aws.version>1.12.261</aws.version>
-		<mica.auto.version>2.2.2</mica.auto.version>
+		<mica.auto.version>3.0.0</mica.auto.version>
 		<swagger.version>1.5.22</swagger.version>
 		<swagger.v3.version>2.1.10</swagger.v3.version>
 		<spring.checkstyle.plugin>0.0.29</spring.checkstyle.plugin>
@@ -97,9 +97,10 @@
 			</plugin>
 		</plugins>
 	</build>
+
 	<profiles>
 		<profile>
-			<id>release</id>
+			<id>snapshot</id>
 			<build>
 				<plugins>
 					<!-- Source -->
@@ -120,14 +121,14 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-javadoc-plugin</artifactId>
-						<version>2.9.1</version>
+						<version>3.3.2</version>
 						<configuration>
 							<show>private</show>
 							<nohelp>true</nohelp>
 							<charset>UTF-8</charset>
 							<encoding>UTF-8</encoding>
 							<docencoding>UTF-8</docencoding>
-							<additionalparam>-Xdoclint:none</additionalparam>
+							<doclint>none</doclint>
 							<detectJavaApiLink>false</detectJavaApiLink>
 						</configuration>
 						<executions>
@@ -163,7 +164,7 @@
 					<plugin>
 						<groupId>org.sonatype.plugins</groupId>
 						<artifactId>nexus-staging-maven-plugin</artifactId>
-						<version>1.6.8</version>
+						<version>1.6.13</version>
 						<extensions>true</extensions>
 						<configuration>
 							<serverId>sonatype</serverId>
@@ -180,6 +181,84 @@
 						https://oss.sonatype.org/content/repositories/snapshots/
 					</url>
 				</snapshotRepository>
+			</distributionManagement>
+		</profile>
+		<profile>
+			<id>release</id>
+			<build>
+				<plugins>
+					<!-- Source -->
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-source-plugin</artifactId>
+						<version>2.2.1</version>
+						<executions>
+							<execution>
+								<phase>package</phase>
+								<goals>
+									<goal>jar-no-fork</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<!-- Javadoc -->
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-javadoc-plugin</artifactId>
+						<version>3.3.2</version>
+						<configuration>
+							<show>private</show>
+							<nohelp>true</nohelp>
+							<charset>UTF-8</charset>
+							<encoding>UTF-8</encoding>
+							<docencoding>UTF-8</docencoding>
+							<doclint>none</doclint>
+							<detectJavaApiLink>false</detectJavaApiLink>
+						</configuration>
+						<executions>
+							<execution>
+								<phase>package</phase>
+								<goals>
+									<goal>jar</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<!-- GPG -->
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-gpg-plugin</artifactId>
+						<version>3.0.1</version>
+						<executions>
+							<execution>
+								<id>sign-artifacts</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>sign</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<gpgArguments>
+								<arg>--pinentry-mode</arg>
+								<arg>loopback</arg>
+							</gpgArguments>
+						</configuration>
+					</plugin>
+					<plugin>
+						<groupId>org.sonatype.plugins</groupId>
+						<artifactId>nexus-staging-maven-plugin</artifactId>
+						<version>1.6.13</version>
+						<extensions>true</extensions>
+						<configuration>
+							<serverId>sonatype</serverId>
+							<nexusUrl>https://oss.sonatype.org/</nexusUrl>
+							<autoReleaseAfterClose>true</autoReleaseAfterClose>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+			<distributionManagement>
 				<repository>
 					<id>sonatype</id>
 					<url>

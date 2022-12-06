@@ -12,12 +12,18 @@
 
 ## spring boot starter依赖
 
+
+| 版本 | 支持 |
+|-------|--|
+| 3.0.0 | 适配 SpringBoot3.x |
+| 1.0.5 | 适配 SpringBoot2.x |
+
 - 方便在 web 环境下使用 `oss` ，已上传至 maven 仓库
 ```xml
 <dependency>
     <groupId>com.pig4cloud.plugin</groupId>
     <artifactId>oss-spring-boot-starter</artifactId>
-    <version>1.0.5</version>
+    <version>${lastVersion}</version>
 </dependency>
 ```
 

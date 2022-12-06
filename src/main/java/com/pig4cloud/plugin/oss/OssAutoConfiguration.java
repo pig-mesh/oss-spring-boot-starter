@@ -19,6 +19,7 @@ package com.pig4cloud.plugin.oss;
 
 import com.pig4cloud.plugin.oss.http.OssEndpoint;
 import com.pig4cloud.plugin.oss.service.OssTemplate;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
@@ -33,6 +34,7 @@ import org.springframework.context.annotation.Configuration;
  * @author 858695266
  * @author L.cm
  */
+@AutoConfiguration
 @Configuration(proxyBeanMethods = false)
 @EnableConfigurationProperties({ OssProperties.class })
 public class OssAutoConfiguration {
