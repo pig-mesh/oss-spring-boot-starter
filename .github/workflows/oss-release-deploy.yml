@@ -1,12 +1,12 @@
 name: publish maven package
-
 on:
   workflow_dispatch:
   push:
     tags:
       - '*'
+
 jobs:
-  oss-deploy:
+  oss-release-deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -17,6 +17,7 @@ jobs:
           java-version: '17'
           distribution: 'adopt'
           cache: maven
+
       - name: Setup Maven Central
         uses: actions/setup-java@v3
         with: # overwrite settings.xml
@@ -29,7 +30,7 @@ jobs:
           gpg-passphrase: MAVEN_GPG_PASSPHRASE
 
       - name: Publish to Maven Central
-        run: mvn clean deploy -Dmaven.test.skip=true -P 'release'
+        run:  mvn clean deploy -P release -Dmaven.test.skip=true
         env:
           MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
           OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
