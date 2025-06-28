@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.3.4</version>
+		<version>3.5.3</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.pig4cloud.plugin</groupId>
@@ -16,7 +16,7 @@
 
 	<properties>
 		<java.version>17</java.version>
-		<aws.version>1.12.261</aws.version>
+		<aws.version>2.31.72</aws.version>
 		<mica.auto.version>3.1.3</mica.auto.version>
 		<swagger.version>1.5.22</swagger.version>
 		<swagger.v3.version>2.1.10</swagger.v3.version>
@@ -30,11 +30,13 @@
 			<scope>provided</scope>
 		</dependency>
 
-		<!--S3 SDK-->
+		<!--S3 SDK v2-->
+		<!-- https://mvnrepository.com/artifact/software.amazon.awssdk/s3 -->
 		<dependency>
-			<groupId>com.amazonaws</groupId>
-			<artifactId>aws-java-sdk-s3</artifactId>
+			<groupId>software.amazon.awssdk</groupId>
+			<artifactId>s3</artifactId>
 			<version>${aws.version}</version>
+			<scope>compile</scope>
 		</dependency>
 
 		<!-- validation-api -->

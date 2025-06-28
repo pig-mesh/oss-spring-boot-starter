@@ -17,10 +17,6 @@
 
 package com.pig4cloud.plugin.oss.http;
 
-import com.amazonaws.services.s3.model.Bucket;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.S3Object;
-import com.amazonaws.services.s3.model.S3ObjectSummary;
 import com.pig4cloud.plugin.oss.service.OssTemplate;
 import io.swagger.annotations.Api;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -34,8 +30,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import software.amazon.awssdk.services.s3.model.Bucket;
+import software.amazon.awssdk.services.s3.model.HeadObjectResponse;
+import software.amazon.awssdk.services.s3.model.S3Object;
 
 import java.io.InputStream;
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -93,22 +93,22 @@ public class OssEndpoint {
 	 */
 	@SneakyThrows
 	@PostMapping("/object/{bucketName}")
-	public S3ObjectSummary createObject(@RequestBody @NotNull MultipartFile object,
+	public Map<String, Object> createObject(@RequestBody @NotNull MultipartFile object,
 			@PathVariable @NotBlank String bucketName) {
 		@Cleanup
 		InputStream inputStream = object.getInputStream();
 		String name = object.getOriginalFilename();
 
 		ossTemplate.putObject(bucketName, name, inputStream, object.getSize(), object.getContentType());
-		S3Object objectInfo = ossTemplate.getObjectInfo(bucketName, name);
-		ObjectMetadata objectMetadata = objectInfo.getObjectMetadata();
-		S3ObjectSummary objectSummary = new S3ObjectSummary();
-		objectSummary.setKey(objectInfo.getKey());
-		objectSummary.setBucketName(bucketName);
-		objectSummary.setETag(objectMetadata.getETag());
-		objectSummary.setLastModified(objectMetadata.getLastModified());
-		objectSummary.setSize(objectMetadata.getContentLength());
-		return objectSummary;
+		HeadObjectResponse objectInfo = ossTemplate.getObjectInfo(bucketName, name);
+
+		Map<String, Object> result = new HashMap<>();
+		result.put("key", name);
+		result.put("bucketName", bucketName);
+		result.put("eTag", objectInfo.eTag());
+		result.put("lastModified", objectInfo.lastModified());
+		result.put("size", objectInfo.contentLength());
+		return result;
 	}
 
 	/**
@@ -116,24 +116,24 @@ public class OssEndpoint {
 	 */
 	@SneakyThrows
 	@PostMapping("/object/{bucketName}/{objectName}")
-	public S3ObjectSummary createObject(@RequestBody @NotNull MultipartFile object,
+	public Map<String, Object> createObject(@RequestBody @NotNull MultipartFile object,
 			@PathVariable @NotBlank String bucketName, @PathVariable @NotBlank String objectName) {
 		@Cleanup
 		InputStream inputStream = object.getInputStream();
 		ossTemplate.putObject(bucketName, objectName, inputStream, object.getSize(), object.getContentType());
-		S3Object objectInfo = ossTemplate.getObjectInfo(bucketName, objectName);
-		ObjectMetadata objectMetadata = objectInfo.getObjectMetadata();
-		S3ObjectSummary objectSummary = new S3ObjectSummary();
-		objectSummary.setKey(objectInfo.getKey());
-		objectSummary.setBucketName(bucketName);
-		objectSummary.setETag(objectMetadata.getETag());
-		objectSummary.setLastModified(objectMetadata.getLastModified());
-		objectSummary.setSize(objectMetadata.getContentLength());
-		return objectSummary;
+		HeadObjectResponse objectInfo = ossTemplate.getObjectInfo(bucketName, objectName);
+
+		Map<String, Object> result = new HashMap<>();
+		result.put("key", objectName);
+		result.put("bucketName", bucketName);
+		result.put("eTag", objectInfo.eTag());
+		result.put("lastModified", objectInfo.lastModified());
+		result.put("size", objectInfo.contentLength());
+		return result;
 	}
 
 	@GetMapping("/object/{bucketName}/{objectName}")
-	public List<S3ObjectSummary> filterObject(@PathVariable @NotBlank String bucketName,
+	public List<S3Object> filterObject(@PathVariable @NotBlank String bucketName,
 			@PathVariable @NotBlank String objectName) {
 		return ossTemplate.getAllObjectsByPrefix(bucketName, objectName);
 	}

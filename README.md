@@ -1,5 +1,7 @@
 ## oss-spring-boot-starter
 
+[![Maven Central](https://img.shields.io/maven-central/v/com.pig4cloud.plugin/oss-spring-boot-starter.svg)](https://search.maven.org/artifact/com.pig4cloud.plugin/oss-spring-boot-starter)
+
 兼容S3 协议的通用文件存储工具类 ，支持 兼容S3 协议的云存储 
 
 - MINIO
@@ -15,7 +17,7 @@
 
 | 版本 | 支持 |
 |-------|--|
-| 3.0.0 | 适配 SpringBoot3.x |
+| 3.2.0 | 适配 SpringBoot3.x |
 | 1.0.5 | 适配 SpringBoot2.x |
 
 - 方便在 web 环境下使用 `oss` ，已上传至 maven 仓库
