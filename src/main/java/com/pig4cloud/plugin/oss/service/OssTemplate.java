@@ -327,8 +327,9 @@ public class OssTemplate implements InitializingBean {
 				.region(Region.of(ossProperties.getRegion() != null ? ossProperties.getRegion() : "us-east-1"))
 				.credentialsProvider(StaticCredentialsProvider
 						.create(AwsBasicCredentials.create(ossProperties.getAccessKey(), ossProperties.getSecretKey())))
-				.serviceConfiguration(
-						S3Configuration.builder().pathStyleAccessEnabled(ossProperties.getPathStyleAccess()).build())
+				.serviceConfiguration(S3Configuration.builder()
+							.pathStyleAccessEnabled(ossProperties.getPathStyleAccess())
+							.chunkedEncodingEnabled(ossProperties.getChunkedEncodingEnabled()).build())
 				.build();
 
 		// 创建 S3 Presigner
