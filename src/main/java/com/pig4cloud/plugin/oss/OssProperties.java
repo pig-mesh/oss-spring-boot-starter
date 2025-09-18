@@ -63,6 +63,12 @@ public class OssProperties {
 	private Boolean pathStyleAccess = true;
 
 	/**
+	 * Option to enable using chunked encoding when signing the request payload
+	 * aliyun 需要关闭
+	 */
+	private Boolean chunkedEncodingEnabled = true;
+
+	/**
 	 * 区域
 	 */
 	private String region;
