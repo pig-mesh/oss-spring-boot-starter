@@ -17,7 +17,7 @@
 
 | 版本    | 支持 |
 |-------|--|
-| 3.2.1 | 适配 SpringBoot3.x |
+| 3.1.1 | 适配 SpringBoot3.x |
 | 1.0.5 | 适配 SpringBoot2.x |
 
 - 方便在 web 环境下使用 `oss` ，已上传至 maven 仓库
