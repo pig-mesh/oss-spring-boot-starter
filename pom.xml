@@ -1,22 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.5.5</version>
-		<relativePath/> <!-- lookup parent from repository -->
+		<version>3.5.8</version>
+		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.pig4cloud.plugin</groupId>
 	<artifactId>oss-spring-boot-starter</artifactId>
-	<version>3.1.1</version>
+	<version>3.1.2</version>
 	<name>oss-spring-boot-starter</name>
 	<description>兼容S3 协议的通用文件存储工具类</description>
 
 	<properties>
 		<java.version>17</java.version>
-		<aws.version>2.33.11</aws.version>
+		<aws.version>2.39.6</aws.version>
 		<mica.auto.version>3.1.3</mica.auto.version>
 		<swagger.version>1.5.22</swagger.version>
 		<swagger.v3.version>2.1.10</swagger.v3.version>
@@ -30,7 +31,8 @@
 			<scope>provided</scope>
 		</dependency>
 
-		<!--S3 SDK v2-->
+		<!--S3
+		SDK v2-->
 		<!-- https://mvnrepository.com/artifact/software.amazon.awssdk/s3 -->
 		<dependency>
 			<groupId>software.amazon.awssdk</groupId>
@@ -60,7 +62,8 @@
 			<scope>provided</scope>
 		</dependency>
 
-		<!--lombok 插件-->
+		<!--lombok
+		插件-->
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
@@ -91,7 +94,8 @@
 
 	<build>
 		<plugins>
-			<!--代码格式插件，默认使用spring 规则-->
+			<!--代码格式插件，默认使用spring
+			规则-->
 			<plugin>
 				<groupId>io.spring.javaformat</groupId>
 				<artifactId>spring-javaformat-maven-plugin</artifactId>
@@ -101,90 +105,6 @@
 	</build>
 
 	<profiles>
-		<profile>
-			<id>snapshot</id>
-			<build>
-				<plugins>
-					<!-- Source -->
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-source-plugin</artifactId>
-						<version>2.2.1</version>
-						<executions>
-							<execution>
-								<phase>package</phase>
-								<goals>
-									<goal>jar-no-fork</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-					<!-- Javadoc -->
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-javadoc-plugin</artifactId>
-						<version>3.3.2</version>
-						<configuration>
-							<show>private</show>
-							<nohelp>true</nohelp>
-							<charset>UTF-8</charset>
-							<encoding>UTF-8</encoding>
-							<docencoding>UTF-8</docencoding>
-							<doclint>none</doclint>
-							<detectJavaApiLink>false</detectJavaApiLink>
-						</configuration>
-						<executions>
-							<execution>
-								<phase>package</phase>
-								<goals>
-									<goal>jar</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-					<!-- GPG -->
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-gpg-plugin</artifactId>
-						<version>3.0.1</version>
-						<executions>
-							<execution>
-								<id>sign-artifacts</id>
-								<phase>verify</phase>
-								<goals>
-									<goal>sign</goal>
-								</goals>
-							</execution>
-						</executions>
-						<configuration>
-							<gpgArguments>
-								<arg>--pinentry-mode</arg>
-								<arg>loopback</arg>
-							</gpgArguments>
-						</configuration>
-					</plugin>
-					<plugin>
-						<groupId>org.sonatype.plugins</groupId>
-						<artifactId>nexus-staging-maven-plugin</artifactId>
-						<version>1.6.13</version>
-						<extensions>true</extensions>
-						<configuration>
-							<serverId>sonatype</serverId>
-							<nexusUrl>https://oss.sonatype.org/</nexusUrl>
-							<autoReleaseAfterClose>true</autoReleaseAfterClose>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-			<distributionManagement>
-				<snapshotRepository>
-					<id>sonatype</id>
-					<url>
-						https://oss.sonatype.org/content/repositories/snapshots/
-					</url>
-				</snapshotRepository>
-			</distributionManagement>
-		</profile>
 		<profile>
 			<id>release</id>
 			<build>
@@ -247,25 +167,19 @@
 							</gpgArguments>
 						</configuration>
 					</plugin>
-          <plugin>
-            <groupId>org.sonatype.central</groupId>
-            <artifactId>central-publishing-maven-plugin</artifactId>
-            <version>0.8.0</version>
-            <extensions>true</extensions>
-            <configuration>
-              <publishingServerId>center</publishingServerId>
-            </configuration>
-          </plugin>
+					<plugin>
+						<groupId>org.sonatype.central</groupId>
+						<artifactId>central-publishing-maven-plugin</artifactId>
+						<version>0.5.0</version>
+						<extensions>true</extensions>
+						<configuration>
+							<publishingServerId>center</publishingServerId>
+							<autoPublish>true</autoPublish>
+							<waitUntil>published</waitUntil>
+						</configuration>
+					</plugin>
 				</plugins>
 			</build>
-			<distributionManagement>
-				<repository>
-					<id>sonatype</id>
-					<url>
-						https://oss.sonatype.org/service/local/staging/deploy/maven2/
-					</url>
-				</repository>
-			</distributionManagement>
 		</profile>
 	</profiles>
 </project>
